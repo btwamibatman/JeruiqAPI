@@ -6,30 +6,8 @@ Jeruiq is a backend service built using Flask and follows the Clean Architecture
 
 📂 Project Structure
 
-project/
-├── core/                 # Business logic layer
-│   ├── entities/         # Domain models (User, Role, Permission)
-│   ├── use_cases/        # Business use cases (UserRegistration, AssignRole)
-│   ├── ports/            # Interfaces for repositories and services
-│
-├── adapters/             # Infrastructure & interface implementations
-│   ├── web/              # Flask API controllers
-│   │   ├── rest/         # REST endpoints
-│   │   ├── schemas/      # DTOs (Pydantic/Marshmallow)
-│   ├── repositories/     # Database implementations
-│   │   ├── sqlalchemy/   # PostgreSQL repository
-│   ├── external/         # External service adapters (Email, Chat)
-│   ├── auth/             # Authentication services (JWT, OAuth)
-│
-├── infrastructure/       # Core infrastructure settings
-│   ├── db/               # SQLAlchemy setup, migrations (Alembic)
-│   ├── cache/            # Redis client
-│   ├── tasks/            # Celery tasks
-│   ├── config.py         # Configuration settings
-│
-├── tests/                # Unit and integration tests
-├── main.py               # Application entry point
-└── README.md             # Project documentation
+![image](https://github.com/user-attachments/assets/e7017427-bf6f-4476-b95d-0f7fca6f1855)
+
 
 🔧 Installation & Setup
 
