@@ -8,7 +8,7 @@ Jeruiq is a backend service built using Flask and follows the Clean Architecture
 
 ![image](https://github.com/user-attachments/assets/e7017427-bf6f-4476-b95d-0f7fca6f1855)
 
-
+(Not all feature from image, has been realized yet)
 🔧 Installation & Setup
 
 1️⃣ Clone the repository
