@@ -1,5 +1,5 @@
 class Permission:
-    """Определяет права доступа пользователей в системе"""
+    """права доступа пользователей в системе"""
     READ = "read"
     WRITE = "write"
     DELETE = "delete"
@@ -7,7 +7,7 @@ class Permission:
     
     ROLE_PERMISSIONS = {
         "user": {READ},
-        "guide": {READ, WRITE},
+        "guider": {READ, WRITE},
         "admin": {READ, WRITE, DELETE, MANAGE_USERS},
     }
 

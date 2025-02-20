@@ -9,7 +9,7 @@ auth_blueprint = Blueprint("auth", __name__)
 # Используем репозиторий пользователей и сервис аутентификации
 user_repo = SQLAlchemyUserRepository()
 auth_service: AuthService = JWTAuthService()
-user_login = UserLogin(user_repo)
+user_login = UserLogin(user_repo, auth_service)
 
 @auth_blueprint.route("/login", methods=["POST"])
 def login():

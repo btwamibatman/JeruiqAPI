@@ -1,12 +1,11 @@
 from core.ports.auth_service import AuthService
 from core.ports.user_repository import UserRepository
-from adapters.auth.jwt_auth import JWTAuthService
 from adapters.auth.password_hasher import PasswordHasher
 
 class UserLogin:
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: UserRepository, auth_service: AuthService):
         self.user_repository = user_repository
-        self.auth_service: AuthService = JWTAuthService()
+        self.auth_service = auth_service
 
     def login(self, email: str, password: str):
         """Аутентификация пользователя и выдача JWT токена"""
