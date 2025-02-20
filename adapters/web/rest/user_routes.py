@@ -12,7 +12,7 @@ user_blueprint = Blueprint("users", __name__)
 auth_service = JWTAuthService()
 user_repo: UserRepository = SQLAlchemyUserRepository()
 user_registration = UserRegistration(user_repo, auth_service)
-user_login = UserLogin(user_repo)
+user_login = UserLogin(user_repo, auth_service)
 
 
 def token_required(f):
@@ -22,9 +22,9 @@ def token_required(f):
         if not token:
             return jsonify({"error": "Token is missing"}), 401
         try:
-            token = token.split(" ")[1]  # Bearer token
+            token = token.split(" ")[1] 
             user_data = auth_service.verify_token(token)
-            request.user = user_data  # Сохраняем пользователя в запрос
+            request.user = user_data  
         except ValueError as e:
             return jsonify({"error": str(e)}), 401
         return f(*args, **kwargs)
@@ -33,7 +33,6 @@ def token_required(f):
 @user_blueprint.route("/", methods=["GET"])
 @token_required
 def get_users():
-    """Получает список всех пользователей (только для авторизованных)"""
     users = user_repo.get_all_users()
     return jsonify([user.__dict__ for user in users])
 

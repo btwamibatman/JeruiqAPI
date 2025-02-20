@@ -9,7 +9,7 @@ class JWTAuthService(AuthService):
     def generate_token(self, user_id: str) -> str:
         payload = {
             "user_id": user_id,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=12),
+            "exp": datetime.timedelta(hours=12),
         }
         return jwt.encode(payload, self.SECRET_KEY, algorithm="HS256")
 

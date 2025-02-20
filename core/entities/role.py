@@ -1,8 +1,8 @@
 class Role:
     USER = "user"
     ADMIN = "admin"
-    GUIDE = "guide"
+    GUIDER = "guider"
 
     @staticmethod
     def is_valid(role: str) -> bool:
-        return role in {Role.USER, Role.ADMIN, Role.GUIDE}
+        return role in {Role.USER, Role.ADMIN, Role.GUIDER}

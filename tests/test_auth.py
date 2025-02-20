@@ -10,15 +10,21 @@ class MockUserRepository(UserRepository):
     """Фейковый репозиторий для тестов"""
     def __init__(self):
         self.users = {}
-
-    def get_by_id(self, user_id: str):
-        return self.users.get(user_id)
+    
+    def create_user(self, user):
+        self.users[user.user.email] = user
 
     def get_by_email(self, email: str):
         return next((u for u in self.users.values() if u.email == email), None)
 
     def save(self, user: User):
         self.users[user.user_id] = user
+    
+    def delete(self, user_id: str):
+        del self.users[user_id]
+
+    def get_all_users(self):
+        return list(self.users.values())
 
 class TestAuth(unittest.TestCase):
     def setUp(self):
