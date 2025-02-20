@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Get Started - Odyssey
+{% endblock %}
+
+{% block body %}
+<div class="main-bg">
+    <header>
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <div class="logo">Jeruyiq</div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Overview</a></li>
+                <li><a href="/">Technology</a></li>
+                <li><a href="/">Testimonials</a></li>
+                <li><a href="/">Resources</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="login">Log In</button>
+                <button class="get-started">Get Started</button>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <h1>Travelling is an investment in yourself</h1>
+            <p>Discover the world around you from new perspectives</p>
+            <div class="searchbox">
+                <div class="chat-box-container">
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" placeholder="Ask anything...">
+                        <div>
+                            <button class="send__button">
+                                <img src="/static/images/send.png">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </section>
+    </main>
+</div>
+<script type="text/javascript">
+    window.$SCRIPT_ROOT = "{{ request.script_root|safe }}";
+</script>
+<!-- Then load your application script -->
+<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

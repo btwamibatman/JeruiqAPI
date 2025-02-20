@@ -1,0 +1,228 @@
+*, html {
+    --primaryGradient: linear-gradient(93.12deg, #581B98 0.52%, #9C1DE7 100%);
+    --secondaryGradient: linear-gradient(268.91deg, #581B98 -2.14%, #9C1DE7 99.69%);
+    --primaryBoxShadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+    --secondaryBoxShadow: 0px -10px 15px rgba(0, 0, 0, 0.1);
+    --primary: #581B98;
+}
+body {
+    background: black;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    color: white;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+.main-bg {
+    background: url('images/almaty-glacier.jpg') no-repeat center center/cover;
+    min-height: 100vh; /* Ensure background fills the entire viewport */
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.6s ease;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0);
+    position: fixed;
+    width: 100%;
+    height: 12%;
+    top: 0;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+.navbar-logo {
+    display: flex;
+    font-size: 32px;
+    align-items: center;
+    justify-content: left;
+    font-weight: bold;
+    margin-left: 40px;
+    width: 230px;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+    padding: 10px 24px;
+    align-items: center;
+    border-radius: 16px;
+    border: 1px solid grey;
+    background: rgba(0, 0, 0, 0.2);
+}
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+.nav-links li a:hover {
+    color: #9C1DE7;
+}
+.auth-buttons {
+    justify-content: center;
+    display: flex;
+    width: 270px;
+    gap: 15px;
+}
+.auth-buttons button {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid grey;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: transform 0.2s;
+    border-radius: 24px;
+}
+
+.auth-buttons button:hover {
+    transform: scale(1.05);
+}
+.hero {
+    flex-grow: 1;
+    display: flex;
+    margin-top: 8%;
+    height: 36%;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    padding: 16px 0px;
+    transition: opacity 0.5s ease-out;
+}
+.hero h1 {
+    font-size: 3em;
+    font-weight: bold;
+}
+.hero p {
+    margin-bottom: 48px;
+}
+
+.searchbox {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s ease-in-out;
+}
+.chat-box-container {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+    display: inline-block;
+    padding: 16px;
+    border-radius: 8px;
+    margin: auto;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}
+.chat-input-container {
+    display: flex;
+    height: 72px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgb(80, 80, 80);
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+.chat-input {
+    flex: 1;
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    resize: none;
+}
+.chat-input:focus {
+    outline: none;
+}
+.send__button {
+    position: relative;
+    display: flex;
+    top: 28%;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.send__button img {
+    right: 50%;
+    width: 90%;
+    height: auto;
+    margin: auto;
+    display: flex;
+    margin-left: 10%;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Transition classes */
+.transition-active {
+    animation: expand-box 0.6s forwards;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+}
+
+@keyframes expand-box {
+    0% {
+        transform: scale(1);
+        border-radius: 8px;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1.1);
+        border-radius: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        padding: 0;
+    }
+}
+
+.fade-content {
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+}
+
+.pulse-loading {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #9C1DE7;
+    margin: 0 auto;
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+}
