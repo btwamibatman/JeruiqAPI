@@ -11,8 +11,9 @@ class UserRegistration:
         """Регистрирует нового пользователя"""
         if self.user_repository.get_by_email(email):
             raise ValueError("Пользователь с таким email уже существует")
-
-        hashed_password = PasswordHasher.hash_password(password)  # ХЕШИРУЕМ ПАРОЛЬ
+        print(password)
+        hashed_password = PasswordHasher.hash_password(password)
+        print(f"Generated Hash: {hashed_password}") 
 
         user = User(
             name=name,
@@ -20,5 +21,5 @@ class UserRegistration:
             password_hash=hashed_password,  # Сохраняем хеш
             phone_number=phone_number
         )
-        self.user_repository.create_user(user)
+        self.user_repository.save(user)
         return user

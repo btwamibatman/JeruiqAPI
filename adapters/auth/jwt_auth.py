@@ -1,15 +1,16 @@
 import jwt
 import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+import bcrypt
 from core.ports.auth_service import AuthService
 
 class JWTAuthService(AuthService):
-    SECRET_KEY = "your_secret_key"
-
-    def generate_token(self, user_id: str) -> str:
+    SECRET_KEY = "TOUrc2ek6vIAVV6TbVkzQiTe"
+    
+    def generate_token(self, user_id: str, email: str) -> str:
         payload = {
-            "user_id": user_id,
-            "exp": datetime.timedelta(hours=12),
+            "user_id": str(user_id),
+            "email": email,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }
         return jwt.encode(payload, self.SECRET_KEY, algorithm="HS256")
 
@@ -22,8 +23,8 @@ class JWTAuthService(AuthService):
             raise ValueError("Invalid token")
 
     def hash_password(self, password: str) -> str:
-        return generate_password_hash(password)
+        salt = bcrypt.gensalt()
+        return bcrypt.hashpw(password.encode(), salt).decode()
 
     def verify_password(self, password: str, hashed_password: str) -> bool:
-        return check_password_hash(hashed_password, password)
-# Compare this snippet from core/ports/auth_service.py:
+        return bcrypt.checkpw(password.encode(), hashed_password.encode())
