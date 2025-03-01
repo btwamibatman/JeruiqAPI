@@ -4,7 +4,7 @@ class AuthService(ABC):
     """Abstract Authentication Service Interface"""
 
     @abstractmethod
-    def generate_token(self, user_id: str) -> str:
+    def generate_token(self, user_id: str, email: str) -> str:
         pass
 
     @abstractmethod

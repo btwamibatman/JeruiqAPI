@@ -5,7 +5,7 @@ from infrastructure.db.base import Base
 
 class User:
     """Чистая сущность пользователя (НЕ SQLAlchemy)"""
-    def __init__(self, user_id: str, name: str, email: str, password_hash: str, phone_number: str, role: str = "user", created_at=None, updated_at=None):
+    def __init__(self, name: str, email: str, password_hash: str, phone_number: str, user_id: str = None, role: str = "user", created_at=None, updated_at=None):
         self.user_id = user_id or str(uuid4())  # Генерация UUID
         self.name = name
         self.email = email
