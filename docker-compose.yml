@@ -1,0 +1,103 @@
+services:
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:5001
+      - USER_SERVICE_URL=http://user-service:5002
+      - AI_SERVICE_URL=http://ai-service:5003
+    depends_on:
+      - auth-service
+      - user-service
+      - ai-service
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+
+  # Auth Service
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "5001:5001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@auth-db:5432/auth_db
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+
+  # User Service
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "5002:5002"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@user-db:5432/user_db
+      - AUTH_SERVICE_URL=http://auth-service:5001
+    depends_on:
+      user-db:
+        condition: service_healthy
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+
+  # AI Service
+  ai-service:
+    build: ./services/ai-service
+    ports:
+      - "5003:5003"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+
+  # Databases
+  auth-db:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth_db
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  user-db:
+    image: postgres:14
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=user_db
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - jeruyiq-network  # ✅ Corrected network name
+
+# Define the network
+networks:
+  jeruyiq-network:  # ✅ Corrected network name
+    driver: bridge

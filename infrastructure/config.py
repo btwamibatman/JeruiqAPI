@@ -7,6 +7,9 @@ load_dotenv()
 class Config:
     """Конфигурация проекта"""
 
+    # Отладка
+    DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+
     # База данных
     DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -15,6 +18,12 @@ class Config:
 
     # Настройки логирования
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+    AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:5001")
+    USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:5002")
+    AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://localhost:5003")
+    
+    REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
     @staticmethod
     def validate():
