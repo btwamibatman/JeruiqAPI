@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeruyiq AI Chat</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='chatpage.css') }}">
-    <title>Jeruyiq Chat</title>
 </head>
-<body>
+<body class="fade-in">
     <div class="main-bg">
         <div class="sidebar">
             <h2>Saved Chats</h2>
@@ -15,25 +15,13 @@
             </div>
         </div>
         <div class="chat-container">
-            <div class="chat-box" id="chat-box">
-                <!-- Messages will be dynamically inserted here -->
-                <div class="loading-indicator">
-                    <div class="loading-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-            </div>
+            <div class="chat-box" id="chat-box"></div>
             <div class="input-box">
                 <input type="text" id="user-input" placeholder="Type a message..." class="chat-input">
-                <button class="send__button"></button>
+                <button class="send__button">➤</button>
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        window.$SCRIPT_ROOT = "{{ request.script_root|safe }}";
-    </script>
-    <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
