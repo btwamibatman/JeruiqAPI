@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatpage.css') }}">
+    <title>Jeruyiq Chat</title>
+</head>
+<body>
+    <div class="main-bg">
+        <div class="sidebar">
+            <h2>Saved Chats</h2>
+            <div id="chat-list">
+                <p>No chats yet</p>
+            </div>
+        </div>
+        <div class="chat-container">
+            <div class="chat-box" id="chat-box">
+                <!-- Messages will be dynamically inserted here -->
+                <div class="loading-indicator">
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-box">
+                <input type="text" id="user-input" placeholder="Type a message..." class="chat-input">
+                <button class="send__button"></button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        window.$SCRIPT_ROOT = "{{ request.script_root|safe }}";
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
