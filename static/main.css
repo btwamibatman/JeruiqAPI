@@ -6,30 +6,29 @@
     --primary: #581B98;
 }
 body {
-    background: black;
-    font-family: 'Segoe UI', sans-serif;
+    background: #101010;
+    font-family: 'Geist', sans-serif;
+    height: 400vh;
     text-align: center;
     color: white;
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
-.main-bg {
-    background: url('images/almaty-glacier.jpg') no-repeat center center/cover;
-    min-height: 100vh; /* Ensure background fills the entire viewport */
-    display: flex;
-    flex-direction: column;
-    transition: opacity 0.6s ease;
+::-webkit-scrollbar {
+    display: none;
 }
 
-.navbar {
+header .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(0, 0, 0, 0);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(1rem);
+    border-bottom: 1px solid grey;
+    padding-right: 6rem;
     position: fixed;
     width: 100%;
-    height: 12%;
+    height: 5rem;
     top: 0;
     z-index: 1000;
     transition: opacity 0.5s ease;
@@ -39,38 +38,41 @@ body {
     font-size: 32px;
     align-items: center;
     justify-content: left;
+    padding-left: 6rem;
     font-weight: bold;
-    margin-left: 40px;
-    width: 230px;
+    width: 16rem;
 }
-.nav-links {
+nav {
     list-style: none;
     display: flex;
-    gap: 32px;
+    gap: 2rem;
     padding: 10px 24px;
     align-items: center;
+    justify-content: center;
     border-radius: 16px;
     border: 1px solid grey;
     background: rgba(0, 0, 0, 0.2);
 }
-.nav-links li a {
+nav a {
     color: white;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s;
 }
-.nav-links li a:hover {
+nav a:hover {
     color: #9C1DE7;
 }
 .auth-buttons {
     justify-content: center;
+    padding-right: 6rem;
     display: flex;
-    width: 270px;
-    gap: 15px;
+    width: 16rem;
+    gap: 1rem;
 }
 .auth-buttons button {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid grey;
+    background: rgba(156, 29, 231, 0.1);
+    border: 1px solid;
+    border-color: rgba(156, 29, 231, 0.5);
     padding: 10px 20px;
     cursor: pointer;
     color: white;
@@ -78,151 +80,339 @@ body {
     transition: transform 0.2s;
     border-radius: 24px;
 }
-
 .auth-buttons button:hover {
-    transform: scale(1.05);
+    border-color: #9C1DE7;
+    transition: 0.3s;
+    background: rgba(156, 29, 231, 0.4);
 }
-.hero {
+
+#main-section {
     flex-grow: 1;
     display: flex;
-    margin-top: 8%;
-    height: 36%;
-    flex-direction: column;
-    align-items: center;
     overflow: hidden;
-    padding: 16px 0px;
-    transition: opacity 0.5s ease-out;
+    padding: 9rem 6rem 9rem 6rem;
+    justify-content: space-between;
+    align-items: center;
+    background: url('images/almaty-glacier.jpg') no-repeat center center fixed;
+    background-size: cover;
 }
-.hero h1 {
-    font-size: 3em;
+.main-section-text {
+    display: flexbox;
+    max-width: 50%;
+    text-align: left;
+    justify-content: left;
+}
+.main-section-text h1 {
+    font-size: 4rem;
     font-weight: bold;
+    color: #9C1DE7;
+    margin-bottom: 1rem;
 }
-.hero p {
-    margin-bottom: 48px;
-}
-
-.searchbox {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    position: relative;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.5s ease-in-out;
-}
-.chat-box-container {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    position: relative;
-    display: inline-block;
-    padding: 16px;
-    border-radius: 8px;
-    margin: auto;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-    z-index: 100;
-}
-.chat-input-container {
-    display: flex;
-    height: 72px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgb(80, 80, 80);
-    outline: none;
-    box-sizing: border-box;
-    border-radius: 8px;
-}
-.chat-input {
-    flex: 1;
-    width: 100%;
-    padding: 12px;
-    background: none;
-    border: none;
+.main-section-text p {
+    font-size: 1.5rem;
     color: white;
-    font-size: 16px;
-    resize: none;
+    margin-bottom: 3rem;
 }
-.chat-input:focus {
-    outline: none;
+
+.chat-container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 1.5rem 1.5rem 0 1.5rem;
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: column;
+    width: 37.5rem;
+    height: 25rem;
+    margin-right: 2rem;
 }
-.send__button {
+.chatbot-header {
+    color: white;
+    height: 3rem; /* Reduced height */
+    border-bottom: 1px solid grey;
+    border-radius: 1.5rem 1.5rem 0 0;
+    display: flex;  /* Added for vertical centering */
+    align-items: center; /* Vertically center the heading */
+    font-weight: bold;
+    text-align: left;
+    padding-left: 1.5rem;
+    padding-top: 0; /* Removed padding-top */
+}
+.chatbot-header h2{
+    font-size: 1.2rem;
+    margin: 0;
+}
+.chatbot-messages {
+    flex: 1;
+    height: calc(25rem - 8rem); /* Adjusted height, 8rem is header+input height */
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+}
+.chatbot-input {
+    display: flex;
     position: relative;
-    display: flex;
-    top: 28%;
-    right: 12px;
-    width: 32px;
-    height: 32px;
-    border: none;
-    outline: none;
-    border-radius: 50%;
-    cursor: pointer;
+    border-top: 1px solid grey;
+    width: 100%; /* Changed from 600px to 100% */
+    height: 3rem; /* Reduced height */
+    align-items: center; /* Vertically center items */
+    justify-content: space-between; /* Space between input and button */
 }
-.send__button img {
-    right: 50%;
-    width: 90%;
-    height: auto;
-    margin: auto;
+.chatbot-input input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    border: 0 0 1.5rem 1.5rem;
+    background-color: rgba(0, 0, 0, 0);
+    padding-left: 1rem;
+    color: white;
+    font-size: 1rem;
+    margin-right: 1rem; /* Added margin to input */
+}
+.chatbot-input input:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+.chatbot-input button {
+    background: rgba(0, 0, 0, 0);
+    position: absolute;
+    right: 0;
+    border: 1px solid grey;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    margin: 0 0.5rem 0.1rem 0;
+    transition: transform 0.2s;
+    border-radius: 50%;
+    background-image: url('images/send.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.chatbot-input button:hover {
+    border-color: #9C1DE7;
+    transition: color 0.3s;
+}
+
+#content-section{
     display: flex;
-    margin-left: 10%;
+    flex-direction: column;
+    padding-top: 6rem;
+    justify-content: center;
     align-items: center;
+}
+.content-section-text {
+    display: flexbox;
+    flex-direction: column;
+    max-width: 50%;
+    text-align: center;
     justify-content: center;
 }
-
-/* Transition classes */
-.transition-active {
-    animation: expand-box 0.6s forwards;
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
+.content-section-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 1rem;
+}
+.content-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+.content-section-images {
+    position: relative;
+    height: 64vmin;
+}
+#image-track {
+    display: flex;
+    gap: 4vmin;
+    left: 50%;
+}
+#image-track .image {
+    width: 40vmin;
+    height: 56vmin;
+    object-fit: cover;
+    object-position: center;
 }
 
-@keyframes expand-box {
-    0% {
-        transform: scale(1);
-        border-radius: 8px;
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1.1);
-        border-radius: 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 9999;
-        padding: 0;
-    }
+#features-section {
+    display: flex;
+    flex-direction: column;
+    padding-top: 6rem;
+    justify-content: center;
+    align-items: center;
+}
+.features-section-text {
+    display: flexbox;
+    flex-direction: column;
+    max-width: 50%;
+    text-align: center;
+    justify-content: center;
+}
+.features-section-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 3rem;
+}
+.features-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+.features-section-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+.features-section-cards .card {
+    background: rgba(10, 10, 10, 0.2);
+    backdrop-filter: blur(1rem);
+    border-radius: 2rem;
+    border: 1px solid grey;
+    padding: 2rem;
+    width: 20rem;
+    height: 16rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.features-section-cards .card h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 1rem;
+}
+.features-section-cards .card p {
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+.features-section-cards .card:hover {
+    background-color: rgba(156, 29, 231, 0.1);
+    border-color: #9C1DE7;
+    transition: 0.5s ease;
 }
 
-.fade-content {
-    opacity: 0;
-    transition: opacity 0.4s ease-out;
+
+#contacts-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6rem;
+    padding-top: 6rem;
+}
+.contacts-section-text {
+    display: flexbox;
+    flex-direction: column;
+    height: 22.6rem;
+    max-width: 50%;
+    text-align: left;
+    justify-content: center;
+    padding-left: 6rem;
+}
+.contacts-section-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 3rem;
+}
+.contacts-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+.contacts-section-form {
+    display: flex;
+    vertical-align: top;
+    gap: 1rem;
+    padding-right: 6rem;
+    padding-top: 6rem;
+    height: 22.6rem;
+    width: 37.5rem;
+}
+.contacts-section-form form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.contacts-section-form input {
+    background: rgba(10, 10, 10, 0.2);
+    border-radius: 1.5rem;
+    border: 1px solid grey;
+    padding: 1rem;
+    width: 32rem;
+    color: white;
+    font-size: 1rem;
+}
+.contacts-section-form input:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+.contacts-section-form textarea {
+    background: rgba(10, 10, 10, 0.2);
+    border-radius: 1.5rem;
+    border: 1px solid grey;
+    padding: 1rem;
+    width: 32rem;
+    resize: none;
+    height: 8rem;
+    color: white;
+    font-size: 1rem;
+}
+.contacts-section-form button {
+    background: rgba(0, 0, 0, 0);
+    border: 1px solid grey;
+    width: 8rem;
+    height: 3rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: transform 0.2s;
+    border-radius: 1.5rem;
+}
+.contacts-section-form button:hover {
+    border-color: #9C1DE7;
+    transition: color 0.3s;
+    background: rgba(156, 29, 231, 0.1);
+}
+.contacts-section-form button:active {
+    transform: scale(0.95);
 }
 
-.pulse-loading {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: #9C1DE7;
-    margin: 0 auto;
-    animation: pulse 1.2s infinite;
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(1rem);
+    border-top: 1px solid grey;
+    position: relative;
+    margin-top: 12rem;
+    bottom: 0;
+    width: 100%;
 }
-
-@keyframes pulse {
-    0% {
-        transform: scale(0.8);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0.8);
-        opacity: 0.5;
-    }
+footer p {
+    color: white;
+    font-size: 1rem;
+    margin: 0;
+}
+footer a {
+    color: #9C1DE7;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+footer a:hover {
+    color: #581B98;
+}
+footer a:active {
+    color: #9C1DE7;
 }

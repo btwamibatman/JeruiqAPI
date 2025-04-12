@@ -1,50 +1,104 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Get Started - Odyssey
+Get Started - Jeruyiq
 {% endblock %}
 
 {% block body %}
-<div class="main-bg">
-    <header>
-        <nav class="navbar">
-            <div class="navbar-logo">
-                <div class="logo">Jeruyiq</div>
-            </div>
-            <ul class="nav-links">
-                <li><a href="/">Overview</a></li>
-                <li><a href="/">Technology</a></li>
-                <li><a href="/">Testimonials</a></li>
-                <li><a href="/">Resources</a></li>
-            </ul>
-            <div class="auth-buttons">
-                <button class="login">Log In</button>
-                <button class="get-started">Get Started</button>
-            </div>
+<header>
+    <div class="container">
+        <div class="navbar-logo">
+            <div class="logo">Jeruyiq</div>
+        </div>
+        <nav>
+            <a href="#main-section">Home</a>
+            <a href="#content-section">About us</a>
+            <a href="#features-section">Features</a>
+            <a href="#contacts-section">Contacts</a>
         </nav>
-    </header>
-    <main>
-        <section class="hero">
-            <h1>Travelling is an investment in yourself</h1>
-            <p>Discover the world around you from new perspectives</p>
-            <div class="searchbox">
-                <div class="chat-box-container">
-                    <div class="chat-input-container">
-                        <input type="text" class="chat-input" placeholder="Ask anything...">
-                        <div>
-                            <button class="send__button">
-                                <img src="/static/images/send.png">
-                            </button>
-                        </div>
-                    </div>
+        <div class="auth-buttons">
+            <button class="get-started">Sign Up</button>
+            <button class="login">Log In</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <section id="main-section">
+        <div class="main-section-text">
+            <h1>Travelling is an Investment in Yourself</h1>
+            <p>Discover the world around you from new perspectives</p>  
+        </div>
+        <div class="chat-container">
+            <div class="chatbot">
+                <div class="chatbot-header">
+                    <h2>Jeruyiq AI</h2>
                 </div>
-            </div>            
-        </section>
-    </main>
-</div>
-<script type="text/javascript">
-    window.$SCRIPT_ROOT = "{{ request.script_root|safe }}";
-</script>
-<!-- Then load your application script -->
-<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+                <div class="chatbot-messages">
+
+                </div>
+                <div class="chatbot-input">
+                    <input type="text" placeholder="Search...">
+                    <button></button>
+                </div>
+            </div>
+        </div>   
+    </section>
+
+    <section id="content-section">
+        <div class="content-section-text">
+            <h1>Who we are?</h1>
+            <p>We are a small group of enthusiasts developing an application for the development of tourism in Kazakhstan through the involvement of people in domestic tourism, as well as tourists from other countries.</p>
+        </div>
+        <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0" data-percentage="0">
+            <img class="image" src="https://images.unsplash.com/photo-1637842729600-d256c8960194" draggable="false">
+            <img class="image" src="https://images.unsplash.com/photo-1664884175815-0ee4309d10cf" draggable="false">
+            <img class="image" src="https://images.unsplash.com/photo-1530480667809-b655d4dc3aaa" draggable="false">
+            <img class="image" src="https://images.unsplash.com/photo-1688357166424-9f70f6c661c6" draggable="false">
+            <img class="image" src="https://images.unsplash.com/photo-1661193133821-aad6ceb21fab" draggable="false">
+            <img class="image" src="https://images.unsplash.com/photo-1666453413944-8fa3fd2ee1ac" draggable="false">
+            <img class="image" src="https://images.unsplash.com/photo-1688357167517-33014a69371a" draggable="false">
+        </div>
+    </section>
+
+    <section id="features-section">
+        <div class="features-section-text">
+            <h1>Features</h1> 
+        </div>
+        <div class="features-section-cards">
+            <div class="card">
+                <h2>Personalized Recommendations</h2>
+                <p>Get travel recommendations tailored to your preferences.</p>
+            </div>
+            <div class="card">
+                <h2>Real-time Updates</h2>
+                <p>Stay updated with the latest travel information and alerts.</p>
+            </div>
+            <div class="card">
+                <h2>Community Engagement</h2>
+                <p>Connect with other travelers and share your experiences.</p>
+        </div>
+    </section>
+
+    <section id="contacts-section">
+        <div class="contacts-section-text">
+            <h1>Contact Us</h1>
+            <p>If you have any questions, feel free to reach out to us!</p>
+        </div>
+        <div class="contacts-section-form">
+            <form action="/send_message" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-text">
+        <p>&copy; 2025 Jeruyiq. All rights reserved.</p>
+    </div>
+</footer>
 {% endblock %}
