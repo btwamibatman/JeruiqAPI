@@ -4,11 +4,19 @@
 Get Started - Jeruyiq
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='startpage.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='startpage.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 <header>
     <div class="container">
         <div class="navbar-logo">
-            <div class="logo">Jeruyiq</div>
+            <a class="logo" href="/getstarted">Jeruyıq</a>
         </div>
         <nav>
             <a href="#main-section">Home</a>
@@ -17,13 +25,13 @@ Get Started - Jeruyiq
             <a href="#contacts-section">Contacts</a>
         </nav>
         <div class="auth-buttons">
-            <button class="get-started">Sign Up</button>
-            <button class="login">Log In</button>
+            <button id="signup-button" href="signuppage.html">Sign Up</button>
+            <button id="login-button" href="loginpage.html">Log In</button>
         </div>
     </div>
 </header>
 
-<main class="container">
+<main>
     <section id="main-section">
         <div class="main-section-text">
             <h1>Travelling is an Investment in Yourself</h1>
@@ -35,7 +43,7 @@ Get Started - Jeruyiq
                     <h2>Jeruyiq AI</h2>
                 </div>
                 <div class="chatbot-messages">
-
+                    <div class="message bot-message">Hello! How can I assist you today?</div>
                 </div>
                 <div class="chatbot-input">
                     <input type="text" placeholder="Search...">
@@ -50,14 +58,16 @@ Get Started - Jeruyiq
             <h1>Who we are?</h1>
             <p>We are a small group of enthusiasts developing an application for the development of tourism in Kazakhstan through the involvement of people in domestic tourism, as well as tourists from other countries.</p>
         </div>
-        <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0" data-percentage="0">
-            <img class="image" src="https://images.unsplash.com/photo-1637842729600-d256c8960194" draggable="false">
-            <img class="image" src="https://images.unsplash.com/photo-1664884175815-0ee4309d10cf" draggable="false">
-            <img class="image" src="https://images.unsplash.com/photo-1530480667809-b655d4dc3aaa" draggable="false">
-            <img class="image" src="https://images.unsplash.com/photo-1688357166424-9f70f6c661c6" draggable="false">
-            <img class="image" src="https://images.unsplash.com/photo-1661193133821-aad6ceb21fab" draggable="false">
-            <img class="image" src="https://images.unsplash.com/photo-1666453413944-8fa3fd2ee1ac" draggable="false">
-            <img class="image" src="https://images.unsplash.com/photo-1688357167517-33014a69371a" draggable="false">
+        <div class="content-section-images">
+            <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0" data-percentage="0">
+                <img class="image" src="https://images.unsplash.com/photo-1637842729600-d256c8960194" draggable="false" loading="lazy">
+                <img class="image" src="https://images.unsplash.com/photo-1664884175815-0ee4309d10cf" draggable="false" loading="lazy">
+                <img class="image" src="https://images.unsplash.com/photo-1530480667809-b655d4dc3aaa" draggable="false" loading="lazy">
+                <img class="image" src="https://images.unsplash.com/photo-1688357166424-9f70f6c661c6" draggable="false" loading="lazy">
+                <img class="image" src="https://images.unsplash.com/photo-1661193133821-aad6ceb21fab" draggable="false" loading="lazy">
+                <img class="image" src="https://images.unsplash.com/photo-1666453413944-8fa3fd2ee1ac" draggable="false" loading="lazy">
+                <img class="image" src="https://images.unsplash.com/photo-1688357167517-33014a69371a" draggable="false" loading="lazy">
+            </div>
         </div>
     </section>
 

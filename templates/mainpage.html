@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home - Jeruyiq
+{% endblock %}
+
+{% block extra_css %}
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='mainpage.css') }}" />
+{% endblock %}
+
+{% block body %}
+<header>
+  <div class="container">
+    <div class="left-side">
+      <a class="logo" href="/getstarted">Jeruyıq</a>
+      <div class="searchbar">
+        <input type="text" placeholder="Search...">
+        <button></button>
+      </div>
+    </div>
+      
+    <div class="right-side">
+      <button class="settings-btn"></button>
+      <button class="profile-btn"></button>
+    </div>
+  </div>
+</header>
+<script type="importmap">
+  {
+      "imports": {
+          "three": "https://unpkg.com/three@0.175.0/build/three.module.js",
+          "OrbitControls": "https://unpkg.com/three@0.175.0/examples/jsm/controls/OrbitControls.js",
+          "EffectComposer": "https://unpkg.com/three@0.175.0/examples/jsm/postprocessing/EffectComposer.js",
+          "RenderPass": "https://unpkg.com/three@0.175.0/examples/jsm/postprocessing/RenderPass.js",
+          "ShaderPass": "https://unpkg.com/three@0.175.0/examples/jsm/postprocessing/ShaderPass.js"
+      }
+  }
+</script>
+<script type="module" src="{{ url_for('static', filename='mainpage.js') }}"></script>
+{% endblock %}

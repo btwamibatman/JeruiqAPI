@@ -1,0 +1,395 @@
+body {
+    text-align: center;
+    height: 400vh;
+    background: #101010;
+}
+
+nav {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    padding: 10px 24px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    border: 1px solid grey;
+    background: rgba(0, 0, 0, 0.2);
+}
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+nav a:hover {
+    color: #9C1DE7;
+}
+.auth-buttons {
+    justify-content: center;
+    padding-right: 6rem;
+    display: flex;
+    width: 16rem;
+    gap: 1rem;
+}
+.auth-buttons button {
+    background: rgba(156, 29, 231, 0.1);
+    border: 1px solid;
+    border-color: rgba(156, 29, 231, 0.5);
+    padding: 10px 20px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: transform 0.2s;
+    border-radius: 24px;
+}
+.auth-buttons button:hover {
+    border-color: #9C1DE7;
+    transition: 0.3s;
+    background: rgba(156, 29, 231, 0.4);
+}
+
+#main-section {
+    flex-grow: 1;
+    display: flex;
+    overflow: hidden;
+    padding: 9rem 6rem 9rem 6rem;
+    justify-content: space-between;
+    align-items: center;
+    background: url('images/almaty-glacier.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+.main-section-text {
+    display: flexbox;
+    max-width: 50%;
+    text-align: left;
+    justify-content: left;
+}
+.main-section-text h1 {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #9C1DE7;
+    margin-bottom: 1rem;
+}
+.main-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+
+.chat-container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 1.5rem 1.5rem 0 1.5rem;
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: column;
+    width: 37.5rem;
+    height: 25rem;
+    margin-right: 2rem;
+}
+.chatbot-header {
+    color: white;
+    height: 3rem; /* Reduced height */
+    border-bottom: 1px solid grey;
+    border-radius: 1.5rem 1.5rem 0 0;
+    display: flex;  /* Added for vertical centering */
+    align-items: center; /* Vertically center the heading */
+    font-weight: bold;
+    text-align: left;
+    padding-left: 1rem;
+    padding-top: 0; /* Removed padding-top */
+}
+.chatbot-header h2{
+    font-size: 1.2rem;
+    margin: 0;
+}
+.chatbot-messages {
+    flex: 1;
+    height: calc(25rem - 8rem); /* Adjusted height, 8rem is header+input height */
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+}
+.chatbot-messages .bot-message {
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 1.5rem 1.5rem 1.5rem 0;
+    text-align: left;
+    border: 1px solid #9C1DE7;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: white;
+    font-size: 1rem;
+    width: 44%;
+}
+
+.chatbot-input {
+    display: flex;
+    position: relative;
+    border-top: 1px solid grey;
+    width: 100%; /* Changed from 600px to 100% */
+    height: 3rem; /* Reduced height */
+    align-items: center; /* Vertically center items */
+    justify-content: space-between; /* Space between input and button */
+}
+.chatbot-input input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    border: 0 0 1.5rem 1.5rem;
+    background-color: rgba(0, 0, 0, 0);
+    padding-left: 1rem;
+    color: white;
+    font-size: 1rem;
+    margin-right: 1rem; /* Added margin to input */
+}
+.chatbot-input input:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+.chatbot-input button {
+    background: rgba(0, 0, 0, 0);
+    position: absolute;
+    right: 0;
+    border: 1px solid grey;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    margin: 0 0.5rem 0.1rem 0;
+    transition: transform 0.2s;
+    border-radius: 50%;
+    background-image: url('images/send.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.chatbot-input button:hover {
+    border-color: #9C1DE7;
+    transition: color 0.3s;
+}
+
+#content-section{
+    display: flex;
+    flex-direction: column;
+    padding-top: 6rem;
+    justify-content: center;
+    align-items: center;
+}
+.content-section-text {
+    display: flexbox;
+    flex-direction: column;
+    max-width: 50%;
+    text-align: center;
+    justify-content: center;
+}
+.content-section-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 1rem;
+}
+.content-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+.content-section-images {
+    position: relative;
+    height: 64vmin;
+}
+#image-track {
+    display: flex;
+    gap: 4vmin;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+#image-track .image {
+    width: 40vmin;
+    height: 56vmin;
+    object-fit: cover;
+    object-position: center;
+}
+
+#features-section {
+    display: flex;
+    flex-direction: column;
+    padding-top: 6rem;
+    justify-content: center;
+    align-items: center;
+}
+.features-section-text {
+    display: flexbox;
+    flex-direction: column;
+    max-width: 50%;
+    text-align: center;
+    justify-content: center;
+}
+.features-section-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 3rem;
+}
+.features-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+.features-section-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+.features-section-cards .card {
+    background: rgba(10, 10, 10, 0.2);
+    backdrop-filter: blur(1rem);
+    border-radius: 2rem;
+    border: 1px solid grey;
+    padding: 2rem;
+    width: 20rem;
+    height: 16rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.features-section-cards .card h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 1rem;
+}
+.features-section-cards .card p {
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+.features-section-cards .card:hover {
+    background-color: rgba(156, 29, 231, 0.1);
+    border-color: #9C1DE7;
+    transition: 0.5s ease;
+}
+
+
+#contacts-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6rem;
+    padding-top: 6rem;
+}
+.contacts-section-text {
+    display: flexbox;
+    flex-direction: column;
+    height: 22.6rem;
+    max-width: 50%;
+    text-align: left;
+    justify-content: center;
+    padding-left: 6rem;
+}
+.contacts-section-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 3rem;
+}
+.contacts-section-text p {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 3rem;
+}
+.contacts-section-form {
+    display: flex;
+    vertical-align: top;
+    gap: 1rem;
+    padding-right: 6rem;
+    padding-top: 3rem;
+    height: 22.6rem;
+    width: 37.5rem;
+}
+.contacts-section-form form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.contacts-section-form input {
+    background: rgba(10, 10, 10, 0.2);
+    border-radius: 1.5rem;
+    border: 1px solid grey;
+    padding: 1rem;
+    width: 32rem;
+    color: white;
+    font-size: 1rem;
+}
+.contacts-section-form input:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+.contacts-section-form textarea {
+    background: rgba(10, 10, 10, 0.2);
+    border-radius: 1.5rem;
+    border: 1px solid grey;
+    padding: 1rem;
+    width: 32rem;
+    resize: none;
+    height: 8rem;
+    color: white;
+    font-size: 1rem;
+}
+.contacts-section-form button {
+    background: rgba(0, 0, 0, 0);
+    border: 1px solid grey;
+    width: 8rem;
+    height: 3rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: transform 0.2s;
+    border-radius: 1.5rem;
+}
+.contacts-section-form button:hover {
+    border-color: #9C1DE7;
+    transition: color 0.3s;
+    background: rgba(156, 29, 231, 0.1);
+}
+.contacts-section-form button:active {
+    transform: scale(0.95);
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(1rem);
+    border-top: 1px solid grey;
+    position: relative;
+    margin-top: 12rem;
+    bottom: 0;
+    width: 100%;
+}
+footer p {
+    color: white;
+    font-size: 1rem;
+    margin: 0;
+}
+footer a {
+    color: #9C1DE7;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+footer a:hover {
+    color: #581B98;
+}
+footer a:active {
+    color: #9C1DE7;
+}

@@ -23,9 +23,22 @@ app.register_error_handler(Exception, handle_exception)
 chat_sessions = {}
 
 # Добавляем маршрут для корневого URL
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({"message": "Welcome to the Jeruyiq API!"})
+@app.route("/")
+@app.route("/getstarted")
+def getstarted():
+    return render_template("startpage.html")
+
+@app.route('/signuppage')
+def signup_page():
+    return render_template('signuppage.html')
+
+@app.route('/loginpage')
+def login_page():
+    return render_template('loginpage.html')
+
+@app.route('/home')
+def home_page():
+    return render_template('mainpage.html')
 
 @app.route("/response", methods=["POST"])
 def get_ai_response():
