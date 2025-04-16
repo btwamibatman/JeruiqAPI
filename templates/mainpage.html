@@ -7,25 +7,54 @@ Home - Jeruyiq
 {% block extra_css %}
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='mainpage.css') }}" />
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
-<header>
-  <div class="container">
-    <div class="left-side">
-      <a class="logo" href="/getstarted">Jeruyıq</a>
-      <div class="searchbar">
-        <input type="text" placeholder="Search...">
-        <button></button>
+<nav id="mySidenav" class="sidenav">
+  <button class="logo" id="logo-button"></button>
+  <button class="profile-container">
+    <div class="profile-pic"></div>
+    <div class="profile-info">
+      <p class="profile-name">Zhanserik</p>
+      <div class="profile-line"></div>
+      <p class="profile-email">zhanserikamangazin@gmail.com</p>
+    </div>
+  </button>
+</nav>
+
+<div id="main">
+  <header id="header">
+    <div id="header-container">
+      <div id="left-side">
+        <div class="search-container">
+          <div class="searchbar">
+            <button id="location-search-button">
+              <img src="{{ url_for('static', filename='/images/search-icon.png') }}">
+            </button>
+            <input type="text" class="searchbox" placeholder="Search...">
+          </div>
+          <div class="search-container-btns">
+            <button class="filter-btn" id="filter-btn">
+              <img src="{{ url_for('static', filename='/images/filters-icon.png') }}">
+            </button>
+            <button class="add-location-btn" id="add-location-btn">
+              <img src="{{ url_for('static', filename='/images/add-location-icon.png') }}">
+            </button>
+            <button class="route-btn" id="route-btn">
+              <img src="{{ url_for('static', filename='/images/route-icon.png') }}">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-side">
       </div>
     </div>
-      
-    <div class="right-side">
-      <button class="settings-btn"></button>
-      <button class="profile-btn"></button>
-    </div>
-  </div>
-</header>
+  </header>
+  <div id="cesiumContainer"></div>
+</div>
+
 <script type="importmap">
   {
       "imports": {
@@ -37,5 +66,7 @@ Home - Jeruyiq
       }
   }
 </script>
-<script type="module" src="{{ url_for('static', filename='mainpage.js') }}"></script>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
+<script type="module" defer src="{{ url_for('static', filename='mainpage.js') }}"></script>
+<script src="https://unpkg.com/@tweenjs/tween.js@18.6.4/dist/tween.umd.js"></script>
 {% endblock %}

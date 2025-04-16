@@ -1,185 +1,144 @@
-import * as THREE from "three";
-import { OrbitControls } from "OrbitControls";
-import { EffectComposer } from "EffectComposer";
-import { RenderPass } from "RenderPass";
-import { ShaderPass } from "ShaderPass";
+document.addEventListener('DOMContentLoaded', () => {
+    const logoButton = document.getElementById('logo-button');
+    const sidenav = document.getElementById('mySidenav');
+    const mainContent = document.getElementById('main');
+    const body = document.body;
+    const header = document.getElementById('header');
+    let isNavOpen = false;
 
-import getStarfield from "./src/getStarfield.js";
-import { getFresnelMat } from "./src/getFresnelMat.js";
+    if (!logoButton) console.error("Logo button not found!");
+    if (!sidenav) console.error("Sidenav not found!");
+    if (!mainContent) console.error("Main content not found!");
+    if (!body) console.error("Body element not found!");
 
-const w = window.innerWidth;
-const h = window.innerHeight;
+    console.log("Elements found, adding event listener...");
 
-const scene = new THREE.Scene(); // THREE is already in the global scope
-const camera = new THREE.PerspectiveCamera(75, w / h, 0.01, 1000);
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmZjUwMjQ3Mi01NDlhLTQ3MmYtOWQ2YS1hNzBiZDQ5MDk4ZTYiLCJpZCI6Mjk0Mjk2LCJpYXQiOjE3NDQ3MjAyMzJ9.RhhaSbJergx7Uz8OL3ivIrY0yhL6bf58hkGg0QIRX_M'; // Make sure your token is still here
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+        imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+            url: 'https://tile.openstreetmap.org/'
+        }),
+        animation: false,
+        baseLayerPicker: true,
+        fullscreenButton: false,
+        geocoder: false,
+        homeButton: false,
+        infoBox: false,
+        sceneModePicker: false,
+        selectionIndicator: false,
+        timeline: false,
+        navigationHelpButton: false,
+        navigationInstructionsInitiallyVisible: false
+    });
 
-camera.position.z = 2.1;
+    viewer.creditDisplay.container.style.display = 'none'; // Hide the credits
+    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 80000000;
+    viewer.scene.maximumscreenSpaceCameraFactor = 10.0;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(w, h);
-
-document.body.appendChild(renderer.domElement);
-// THREE.ColorManagement.enabled = true;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-
-const earthGroup = new THREE.Group();
-
-earthGroup.rotation.z = -23.4 * Math.PI / 180;
-scene.add(earthGroup);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.rotateSpeed = 0.25;
-
-const detail = 12;
-const loader = new THREE.TextureLoader();
-const geometry = new THREE.IcosahedronGeometry(1, detail);
-
-// Modified main Earth material to avoid shadows
-const material = new THREE.MeshStandardMaterial({
-    map: loader.load("./static/textures/8k_earth_daymap.jpg"),
-    bumpMap: loader.load("./static/textures/01_earthbump1k.jpg"),
-    bumpScale: 0.1,
-    // Using StandardMaterial with adjustments to avoid shadows
-    roughness: 1.8,
-    metalness: 0.1
-});
-
-const earthMesh = new THREE.Mesh(geometry, material);
-earthGroup.add(earthMesh);
-
-// Enable casting and receiving shadows only for Earth
-earthMesh.castShadow = true;
-earthMesh.receiveShadow = true;
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-// Create spotlight to cast shadow from top-left to bottom-right
-const shadowLight = new THREE.SpotLight(0xffffff, 1.2);
-shadowLight.angle = Math.PI / 5;
-shadowLight.penumbra = 0.7;
-shadowLight.decay = 2;
-shadowLight.distance = 10;
-
-// Position it diagonally (top-left of globe)
-shadowLight.position.set(-3, 3, 3);
-shadowLight.target = earthMesh;
-shadowLight.castShadow = true;
-
-// Optional: soften shadow resolution
-shadowLight.shadow.mapSize.width = 1024;
-shadowLight.shadow.mapSize.height = 1024;
-shadowLight.shadow.radius = 4;
-
-scene.add(shadowLight);
-scene.add(shadowLight.target);
-
-// Removed nightside lights mesh
-
-const cloudsMat = new THREE.MeshStandardMaterial({
-    map: loader.load("./static/textures/8k_earth_clouds.jpg"),
-    transparent: true,
-    opacity: 0.8,
-    blending: THREE.AdditiveBlending,
-    alphaMap: loader.load('./static/textures/05_earthcloudmaptrans.jpg'),
-    // alphaTest: 0.3,
-});
-const cloudsMesh = new THREE.Mesh(geometry, cloudsMat);
-cloudsMesh.scale.setScalar(1.003);
-earthGroup.add(cloudsMesh);
-
-const fresnelMat = getFresnelMat();
-const glowMesh = new THREE.Mesh(geometry, fresnelMat);
-glowMesh.scale.setScalar(1.01);
-earthGroup.add(glowMesh);
-
-const stars = getStarfield({numStars: 2000});
-scene.add(stars);
-
-// Create a light that will follow the camera
-const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
-scene.add(sunLight);
-
-// Add ambient light to eliminate shadows
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
-
-// Add a hemisphere light to better illuminate without shadows
-const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x404040, 0.8);
-scene.add(hemisphereLight);
-
-function animate() {
-    requestAnimationFrame(animate);
-
-    // Update sunLight position to match camera position
-    // This makes the light come from the same direction as the camera
-    sunLight.position.copy(camera.position);
-    
-    // Keep stars slowly rotating for visual effect
-    stars.rotation.y -= 0.0005;
-
-    // Calculate camera distance to Earth's center
-    const distance = camera.position.length();
-
-    // Adjust cloud opacity based on distance
-    const fadeStart = 1.7; // start fading when closer than this
-    const fadeEnd = 1.3;   // fully disappear when closer than this
-
-    if (distance < fadeStart) {
-        const t = THREE.MathUtils.clamp((distance - fadeEnd) / (fadeStart - fadeEnd), 0, 1);
-        cloudsMesh.material.opacity = t * 0.8; // original opacity was 0.8
-    } else {
-        cloudsMesh.material.opacity = 0.8;
+    function flyToLocation(latitude, longitude) {
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, 15000.0),
+            orientation: {
+                heading: Cesium.Math.toRadians(0.0),
+                pitch: Cesium.Math.toRadians(-90.0),
+                roll: 0.0
+            },
+            duration: 3.0,
+            easingFunction: Cesium.EasingFunction.QUADRATIC_OUT
+        });
     }
-    
-    composer.render();
+
+    function openNav() {
+        body.classList.add('sidenav-open');
+        header.classList.add('sidenav-open');
+        sidenav.style.width = '16rem';
+        isNavOpen = true;
+    }
+
+    function closeNav() {
+        body.classList.remove('sidenav-open');
+        header.classList.remove('sidenav-open');
+        sidenav.style.width = '5rem';
+        isNavOpen = false;
+    }
+
+    logoButton.addEventListener('click', () => {
+        isNavOpen ? closeNav() : openNav();
+    });
+
+    const searchButton = document.getElementById('location-search-button');
+    const searchInput = document.querySelector('.searchbar .searchbox');
+    const searchErrorContainer = document.createElement('div');
+    searchErrorContainer.id = 'search-error';
+    searchErrorContainer.style.color = 'red';
+    searchErrorContainer.style.position = 'absolute';
+    searchErrorContainer.style.top = '60px';
+    searchErrorContainer.style.left = '20px';
+    document.body.appendChild(searchErrorContainer);
+
+    if (searchButton && searchInput) {
+        searchButton.addEventListener('click', async () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                clearSearchError();
+                const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=jsonv2&limit=1`;
+
+                try {
+                    const response = await fetch(nominatimUrl, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (!response.ok) throw new Error(`Nominatim API error: ${response.statusText}`);
+                    const data = await response.json();
+
+                    if (data && data.length > 0) {
+                        const latitude = parseFloat(data[0].lat);
+                        const longitude = parseFloat(data[0].lon);
+                        flyToLocation(latitude, longitude);
+                        searchInput.value = '';
+                    } else {
+                        showSearchError(`Location "${query}" not found.`);
+                    }
+                } catch (error) {
+                    console.error("Nominatim fetch error:", error);
+                    showSearchError("Search failed. Please try again later.");
+                }
+            } else {
+                showSearchError("Please enter a location to search.");
+            }
+        });
+
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchButton.click();
+            }
+        });
+
+        searchInput.addEventListener('input', clearSearchError);
+
+    } else {
+        console.error("Search button or input element not found in the DOM!");
+    }
+});
+
+function clearSearchError() {
+    const errorElement = document.getElementById('search-error');
+    if (errorElement) {
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    }
 }
 
-// Create postprocessing pipeline
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-
-// Screen-space shadow pass
-const shadowShader = {
-    uniforms: {
-        tDiffuse: { value: null },
-        uStrength: { value: 0.75 } // Adjust strength of shadow effect
-    },
-    vertexShader: `
-        varying vec2 vUv;
-        void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-    `,
-    fragmentShader: `
-        uniform sampler2D tDiffuse;
-        uniform float uStrength;
-        varying vec2 vUv;
-
-        void main() {
-            vec4 texColor = texture2D(tDiffuse, vUv);
-            
-            // Make a radial shadow in bottom-right corner
-            vec2 center = vec2(0.8, 0.2);
-            float dist = distance(vUv, center);
-            float shadow = smoothstep(0.5, 0.2, dist); // soft radial falloff
-
-            vec3 finalColor = mix(texColor.rgb, vec3(0.0), shadow * uStrength);
-            gl_FragColor = vec4(finalColor, texColor.a);
-        }
-    `
-};
-
-const shadowPass = new ShaderPass(shadowShader);
-composer.addPass(shadowPass);
-
-
-animate();
-
-function handleWindowResize () {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+function showSearchError(message) {
+    const errorElement = document.getElementById('search-error');
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        setTimeout(() => {
+            if (errorElement.textContent === message) {
+                errorElement.style.display = 'none';
+                errorElement.textContent = '';
+            }
+        }, 5000);
+    }
 }
-window.addEventListener('resize', handleWindowResize, false);
