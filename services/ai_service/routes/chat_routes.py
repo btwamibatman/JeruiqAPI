@@ -1,30 +1,36 @@
 from flask import Blueprint, request, jsonify
-import uuid
-from .middleware import token_required
-from models.chat_session import get_response
+from services.ai_service.gemini_ai_model import ChatSession
+from uuid import uuid4 as uuid
 
-chat_bp = Blueprint("chat", __name__)
+chat_bp = Blueprint('chat', __name__)
+chat_sessions = {}
 
-@chat_bp.route('/chat', methods=['POST'])
-@token_required
-def chat(current_user):
-    data = request.json
-    user_message = data.get("message")
-    session_id = data.get("session_id")
-    user_id = current_user.get("sub")  
-
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
-
-    if not session_id:
-        session_id = f"{user_id}_{str(uuid.uuid4())}"
-
+@chat_bp.route('/api/chat/create_session', methods=['POST'])
+def create_session():
     try:
-        full_session_id = f"{user_id}_{session_id}"
-        ai_response = get_response(user_message, full_session_id)
-        
-        return jsonify({"response": ai_response, "session_id": session_id}), 200
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        session_id = str(uuid())
+        chat_sessions[session_id] = ChatSession(session_id)
+        return jsonify({'session_id': session_id}), 201
     except Exception as e:
-        return jsonify({"error": "Failed to process request"}), 500
+        return jsonify({'error': str(e)}), 500
+
+@chat_bp.route('/api/chat/send_message', methods=['POST'])
+def send_message():
+    try:
+        data = request.get_json()
+        message = data.get('message')
+        session_id = data.get('session_id')
+
+        if not message or not session_id:
+            return jsonify({'error': 'Message and session_id are required'}), 400
+
+        chat_session = chat_sessions.get(session_id)
+        if not chat_session:
+            chat_session = ChatSession(session_id)
+            chat_sessions[session_id] = chat_session
+
+        response = chat_session.send_message(message)
+        return jsonify({'response': response}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

@@ -1,5 +1,5 @@
 import pytest
-from main import app
+from app import app
 
 def test_register_user(client):
     """Тест регистрации нового пользователя"""

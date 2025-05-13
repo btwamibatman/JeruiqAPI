@@ -23,13 +23,14 @@
     --sidenav-width-closed: 5rem;
     --sidenav-width-open: 16rem;
     --header-height: 5rem;
+    --filter-options-panel-height: calc(100vh - var(--header-height) - var(--spacing-small) * 2);
     --spacing-small: 0.25rem;
     --spacing-medium: 0.5rem;
     --spacing-large: 1rem;
     --border-radius-small: 1rem;
     --border-radius-medium: 2rem;
     --border-radius-large: 3rem;
-    --transition-duration-fast: 0.2s;
+    --transition-duration-fast: 0.1s;
     --transition-duration-medium: 0.3s;
     --transition-duration-slow: 0.5s;
 }
@@ -45,6 +46,11 @@ body {
     padding: 0;
     overflow-x: hidden;
     transition: margin-left var(--transition-duration-slow) ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 body.sidenav-open {
     margin-left: var(--sidenav-width-open);
@@ -71,6 +77,7 @@ body.sidenav-open {
     background-color: var(--bg-dark);
     overflow-x: hidden;
     transition: width var(--transition-duration-slow) ease-in-out;
+    will-change: width;
 }
 body.sidenav-open .sidenav {
     width: var(--sidenav-width-open);
@@ -172,6 +179,7 @@ body.sidenav-open .profile-container {
     top: var(--spacing-medium);
     opacity: 0;
     transition: width var(--transition-duration-slow) ease-in-out, opacity var(--transition-duration-slow) ease-in-out;
+    will-change: width, opacity;
 }
 .profile-name {
     text-align: left;
@@ -222,6 +230,7 @@ body.sidenav-open .profile-info {
     box-sizing: border-box;
     position: fixed; /* Use fixed for the header */
     transition: width var(--transition-duration-slow) ease-in-out, left var(--transition-duration-slow) ease-in-out;
+    will-change: width, left;
 }
 body.sidenav-open #header {
     left: var(--sidenav-width-open); /* Adjust left when sidenav is open */
@@ -265,6 +274,7 @@ body.sidenav-open #header {
     width: 30rem;
     height: calc(var(--spacing-large) * 3);
     gap: var(--spacing-medium);
+    position: relative;
 }
 .searchbar {
     background: var(--bg-medium-dark);
@@ -343,6 +353,227 @@ body.sidenav-open #header {
 .add-location-btn:hover,
 .route-btn:hover {
     background-color: var(--bg-hover);
+}
+
+.filter-options-panel {
+    position: absolute;
+    top: 100%; /* Position it directly below the search container */
+    left: 0;
+    margin-top: var(--spacing-medium); /* Space between search container and filter options */
+    background-color: var(--bg-dark); /* Or any desired background */
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: var(--border-radius-small);
+    z-index: 10; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the search container or adjust */
+    height: calc(100vh - var(--header-height) - var(--spacing-small) * 2); /* Adjust height as needed */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-duration-medium) ease-in-out;
+    will-change: opacity, visibility;
+}
+.filter-options-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-duration-medium) ease-in-out;
+    will-change: opacity, visibility;
+}
+.filter-options-panel-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-large) var(--spacing-large) var(--spacing-medium) var(--spacing-large);
+    height: 2rem;
+}
+
+.filter-toggle-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the switch */
+}
+.filter-mode-checkbox {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+.filter-mode-label {
+    display: inline-block;
+    width: 4rem; /* Adjust width as needed */
+    height: 2rem; /* Adjust height as needed */
+    background-color: #6c757d; /* Inactive state background */
+    border-radius: 30px; /* Half of the height for rounded ends */
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.toggle-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+}
+.toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 28px; /* Adjust based on track height */
+    height: 28px; /* Adjust based on track height */
+    background-color: #fff; /* Manual/Inactive thumb color */
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    display: block;
+    align-items: center;
+    justify-content: center;
+    line-height: normal;
+    position: absolute;
+}
+.toggle-thumb img {
+    display: block; /* Prevent extra spacing around images */
+    position: absolute; /* Position icons within thumb */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center icons */
+    transition: opacity 0.2s ease-in-out;
+}
+.manual-icon {
+    opacity: 1;
+}
+.ai-icon {
+    opacity: 0;
+}
+/* Active state styles */
+.filter-mode-checkbox:checked + .filter-mode-label {
+    background-color: var(--accent-color); /* Active state background */
+}
+.filter-mode-checkbox:checked + .filter-mode-label .toggle-thumb {
+    transform: translateX(2rem); /* Adjust based on track width and thumb width */
+}
+.filter-mode-checkbox:checked + .filter-mode-label .toggle-thumb .manual-icon {
+    opacity: 0; /* Fade out manual icon */
+}
+.filter-mode-checkbox:checked + .filter-mode-label .toggle-thumb .ai-icon {
+    opacity: 1; /* Fade in AI icon */
+}
+
+.tab-button {
+    padding: var(--spacing-small) var(--spacing-medium);
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent; /* Initially no active indicator */
+}
+.tab-button.active {
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
+}
+.tab-content {
+    display: none; /* Initially hide all content */
+    padding: var(--spacing-medium) 0;
+    opacity: 0;
+    transition: opacity var(--transition-duration-medium) ease-in-out;
+}
+.tab-content.active {
+    display: block; /* Show the active tab's content */
+    opacity: 1;
+}
+
+#ai-filter {
+    padding: 0;
+    border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
+    background-color: rgba(20, 20, 20, 1);
+}
+.ai-chat-container {
+    background-color: rgba(0, 0, 0, 0);
+    padding: var(--spacing-medium);
+    display: flex;
+    flex-direction: column;
+    height: calc(var(--filter-options-panel-height) - 4.5rem);
+    overflow-y: auto;
+}
+.ai-chat-log {
+    flex-grow: 1;
+    margin-bottom: var(--spacing-small);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-chat-input {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color-light);
+    border-radius: var(--border-radius-small);
+    padding: var(--spacing-small);
+    gap: var(--spacing-extra-small);
+    height: 4rem;
+}
+.ai-chat-input-container {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    padding: var(--spacing-small) 0;
+}
+#ai-chat-input {
+    flex-grow: 1;
+    height: 100%;
+    width: calc(100% - 1rem);
+    padding: 0 0.75rem;
+    color: var(--text-primary);
+    border: none;
+    background-color: var(--bg-white);
+}
+#ai-chat-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.9;
+}
+.ai-chat-input-container input[type="text"]:focus {
+    outline: none;
+    background-color: var(--bg-light-dark);
+}
+
+.ai-chat-buttons-container {
+    display: flex;
+    height: 50%;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+.ai-chat-buttons-container button {
+    background-color: var(--bg-light-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color var(--transition-duration-fast) ease;
+}
+
+.user-message, .bot-message {
+    padding: var(--spacing-medium);
+    margin-bottom: var(--spacing-small);
+    border-radius: var(--border-radius-small);
+    color: var(--text-primary);
+    max-width: 80%; /* Prevent messages from taking up the whole width */
+    word-wrap: break-word; /* Handle long messages */
+}
+.user-message {
+    background-color: var(--bg-medium-dark);
+    align-self: flex-end; /* Align user messages to the right */
+}
+.bot-message {
+    background-color: var(--bg-dark);
+    align-self: flex-start; /* Align bot messages to the left */
 }
 
 /* Right Side Styles */

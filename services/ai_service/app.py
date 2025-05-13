@@ -4,9 +4,11 @@ from routes.chat_routes import chat_bp
 from routes.session_routes import session_bp
 from routes.health_check import health_bp
 from infrastructure.config import Config
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object(Config)
+CORS(app)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
