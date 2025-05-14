@@ -72,7 +72,6 @@ Home - Jeruyiq
             <div id="ai-filter" class="tab-content">
               <div class="ai-chat-container" id="ai-chat-container">
                 <div id="ai-chat-log" class="ai-chat-log"></div>
-
                 <div class="ai-chat-input">
                   <div class="ai-chat-input-container">
                     <input type="text" id="ai-chat-input" placeholder="Ask anything...">
@@ -114,5 +113,7 @@ Home - Jeruyiq
   }
 </script> -->
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.1/purify.min.js"></script>
 <script type="module" defer src="{{ url_for('static', filename='mainpage.js') }}"></script>
 {% endblock %}

@@ -1,31 +1,57 @@
 from flask import Blueprint, request, jsonify
 from services.ai_service.gemini_ai_model import ChatSession
-from uuid import uuid4 as uuid
+import logging
+import uuid
 
-chat_bp = Blueprint('chat', __name__, url_prefix='/api/chat')
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+chat_bp = Blueprint('chat', __name__)
 chat_sessions = {}
 
 @chat_bp.route('/create_session', methods=['POST'])
 def create_session():
-    session_id = str(uuid())
-    chat_sessions[session_id] = ChatSession()
-    return jsonify({'session_id': session_id}), 201
+    try:
+        session_id = str(uuid.uuid4())
+        # Create a new ChatSession instance, not just an empty dict
+        chat_sessions[session_id] = ChatSession(session_id)
+        logger.debug(f"Created new session: {session_id}")
+        return jsonify({'session_id': session_id}), 201
+    except Exception as e:
+        logger.error(f"Error creating session: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @chat_bp.route('/send_message', methods=['POST'])
 def send_message():
-    data = request.get_json()
-    session_id = data.get('session_id')
-    message = data.get('message')
-
-    if not session_id or not message:
-        return jsonify({'error': 'Missing session_id or message'}), 400
-
-    chat_session = chat_sessions.get(session_id)
-    if not chat_session:
-        return jsonify({'error': 'Invalid session_id'}), 404
-
     try:
-        response = chat_session.send_message(message)
-        return jsonify({'response': response}), 200
+        data = request.get_json()
+        if not data:
+            logger.error("No JSON data received")
+            return jsonify({'error': 'No data provided'}), 400
+
+        message = data.get('message')
+        session_id = data.get('session_id')
+
+        logger.debug(f"Received message: {message} for session: {session_id}")
+
+        if not message or not session_id:
+            logger.error("Missing message or session_id")
+            return jsonify({'error': 'Message and session_id are required'}), 400
+
+        chat_session = chat_sessions.get(session_id)
+        if not chat_session:
+            logger.info(f"Creating new session for ID: {session_id}")
+            chat_session = ChatSession(session_id)
+            chat_sessions[session_id] = chat_session
+
+        try:
+            response = chat_session.send_message(message)
+            logger.debug(f"AI Response: {response}")
+            return jsonify({'response': response}), 200
+        except Exception as e:
+            logger.error(f"Error getting AI response: {str(e)}")
+            return jsonify({'error': f"AI error: {str(e)}"}), 500
+
     except Exception as e:
+        logger.exception("Error in send_message endpoint")
         return jsonify({'error': str(e)}), 500

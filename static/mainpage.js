@@ -1,4 +1,146 @@
-document.addEventListener('DOMContentLoaded', () => {
+const marked = window.marked;
+const DOMPurify = window.DOMPurify;
+
+function initAIChat() {
+    localStorage.clear();
+
+    const chatContainer = document.getElementById('ai-chat-container');
+    const chatLog = document.getElementById('ai-chat-log');
+    const chatInput = document.getElementById('ai-chat-input');
+    const sendButton = document.getElementById('send-message');
+    let sessionId = null;
+
+    // Define appendMessage function
+    function appendMessage(message, sender, isHTML = false, animate = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', `${sender}-message`);
+        chatLog.appendChild(messageDiv);
+
+        if (isHTML && animate) {
+            typeWriter(messageDiv, message, 2);
+        } else if (isHTML) {
+            messageDiv.innerHTML = message;
+        } else {
+            messageDiv.textContent = message;
+        }
+
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function typeWriter(element, text, speed) {
+        let i = 0;
+        function nextChar() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(nextChar, speed);
+            }
+        }
+        nextChar();
+    }
+
+    function sanitizeAndProcessHTML(text) {
+        // Replace newlines with <br> for basic formatting
+        const formattedText = text.replace(/\n/g, '<br>');
+        const sanitizedHTML = DOMPurify.sanitize(formattedText);
+        return sanitizedHTML;
+    }
+
+    // Add sendMessage function definition
+    async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        try {
+            console.log('Sending message:', message);
+            console.log('Session ID:', sessionId);
+
+            if (!sessionId) {
+                console.log('No session ID found, initializing chat...');
+                await initializeChat();
+            }
+
+            // Display user message
+            appendMessage(message, 'user');
+            chatInput.value = '';
+
+            const response = await fetch('/api/chat/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: sessionId
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            }
+
+            console.log('Server response:', data);
+            const processedHTML = sanitizeAndProcessHTML(data.response);
+            appendMessage(processedHTML, 'bot', true, true);
+
+        } catch (error) {
+            console.error('Error:', error);
+            appendMessage('Error: ' + error.message, 'bot');
+
+            if (error.message.includes('session')) {
+                console.log('Attempting to reinitialize chat...');
+                await initializeChat();
+            }
+        }
+    }
+
+    async function initializeChat() {
+        try {
+            console.log('Initializing chat session...');
+            const response = await fetch('/api/chat/create_session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            sessionId = data.session_id;
+            console.log('Chat session initialized with ID:', sessionId);
+
+            // Add welcome message
+            appendMessage('Hello! How can I help you explore Kazakhstan today?', 'bot');
+
+        } catch (error) {
+            console.error('Error initializing chat session:', error);
+            appendMessage('Error connecting to chat service. Please try again.', 'bot');
+        }
+    }
+
+    // Initialize chat when component loads
+    initializeChat();
+
+    // Add event listeners for sending messages
+    if (sendButton && chatInput) {
+        sendButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    } else {
+        console.error("Chat input elements not found!");
+    }
+}
+
+//  Wrap your existing DOMContentLoaded logic in a top-level function
+function initializePage() {
     const logoButton = document.getElementById('logo-button');
     const sidenav = document.getElementById('mySidenav');
     const mainContent = document.getElementById('main');
@@ -11,11 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mainContent) console.error("Main content not found!");
     if (!body) console.error("Body element not found!");
 
-    console.log("Elements found, adding event listener...");
-
     // --- Cesium Initialization ---
 
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmZjUwMjQ3Mi01NDlhLTQ3MmYtOWQ2YS1hNzBiZDQ5MDk4ZTYiLCJpZCI6Mjk0Mjk2LCJpYXQiOjE3NDQ3MjAyMzJ9.RhhaSbJergx7Uz8OL3ivIrY0yhL6bf58hkGg0QIRX_M'; // Make sure your token is still here
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmZjUwMjQ3Mi01NDlhLTQ3MmYtOWQ2YS1hNzBiZDQ5MDk4ZTYiLCJpZCI6Mjk0Mjk2LCJpYXQiOjE3NDQ3MjAyMzJ9.RhhaSbJergx7Uz8OL3ivIrY0yhL6bf58hkGg0QIRX_M';
     const viewer = new Cesium.Viewer('cesiumContainer', {
         baseLayer: Cesium.ImageryLayer.fromWorldImagery(),
         animation: false,
@@ -69,13 +209,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Search Button and Script ---
     const searchButton = document.getElementById('location-search-button');
     const searchInput = document.querySelector('.searchbar .searchbox');
-    const searchErrorContainer = document.getElementById('search-error'); // Get the existing error container
 
-    if (searchButton && searchInput && searchErrorContainer) {
+    // Create search error container if it doesn't exist
+    let searchErrorContainer = document.getElementById('search-error');
+    if (!searchErrorContainer) {
+        searchErrorContainer = document.createElement('div');
+        searchErrorContainer.id = 'search-error';
+        searchErrorContainer.style.display = 'none';
+        searchErrorContainer.style.color = 'red';
+        searchErrorContainer.style.marginTop = '5px';
+        document.querySelector('.searchbar').appendChild(searchErrorContainer);
+    }
+
+    if (searchButton && searchInput) {
         searchButton.addEventListener('click', async () => {
             const query = searchInput.value.trim();
-            if (query) { // Check if the query has a value
-                clearSearchError(); // Clear any existing error
+            if (query) {
+                clearSearchError();
                 const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=jsonv2&limit=1`;
 
                 try {
@@ -98,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     showSearchError("Search failed. Please try again later.");
                 }
             }
-            // If the query is empty, we do nothing
         });
 
         searchInput.addEventListener('keypress', (event) => {
@@ -109,9 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         searchInput.addEventListener('input', clearSearchError);
-
-    } else {
-
     }
 
     function clearSearchError() {
@@ -163,109 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more filter elements not found in the DOM!");
     }
 
-    // --- AI Chat Script ---
+    // Initialize the chat functionality
+    initAIChat();
+}
 
-    const chatContainer = document.getElementById('ai-chat-container');
-    const chatLog = document.getElementById('ai-chat-log');
-    const chatInput = document.getElementById('ai-chat-input');
-    const sendButton = document.getElementById('send-message');
-    let sessionId = localStorage.getItem('chatSessionId') || null; // Retrieve session ID from local storage
-
-    if (!chatContainer || !chatLog || !chatInput || !sendButton) {
-        console.error("One or more chat elements not found in the DOM!");
-        return; // Stop execution if elements are missing
-    }
-
-    // Initialize chat session
-    async function initializeChat() {
-        try {
-            const response = await fetch('/api/chat/create_session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
-            const data = await response.json();
-            sessionId = data.session_id;
-            localStorage.setItem('chatSessionId', sessionId);
-            console.log('Chat session initialized:', sessionId);
-        } catch (error) {
-            console.error('Error initializing chat session:', error);
-        }
-    }
-
-    if (!sessionId) {
-        initializeChat();
-    }
-
-    function appendMessage(message, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', `${sender}-message`);
-        messageDiv.textContent = message;
-        chatLog.appendChild(messageDiv);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    }
-
-    async function sendMessage() {
-        console.log('Sending message...');
-        console.log('Session ID:', sessionId);
-    
-        const message = chatInput.value.trim();
-        if (!message) return;
-    
-        try {
-            // Display user message
-            appendMessage(message, 'user');
-            chatInput.value = '';
-    
-            // Send message to backend with error handling
-            const response = await fetch('/api/chat/send_message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: message,
-                    session_id: sessionId || 'default'  // Fallback session ID
-                })
-            });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
-            const data = await response.json();
-            console.log('Response data:', data);  // Debug log
-            
-            if (data.error) {
-                throw new Error(data.error);
-            }
-    
-            // Display AI response
-            appendMessage(data.response, 'bot');
-    
-        } catch (error) {
-            console.error('Error:', error);
-            appendMessage('Error: ' + error.message, 'bot');
-            
-            // If session error, try to reinitialize
-            if (error.message.includes('session')) {
-                console.log('Attempting to reinitialize chat...');
-                await initializeChat();
-            }
-        }
-    }
-
-    // Event listeners
-    sendButton.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-});
+document.addEventListener('DOMContentLoaded', initializePage);

@@ -1,105 +1,81 @@
 import google.generativeai as genai
 import os
-import redis
-import json
-from typing import Dict, List
+import re
 import logging
-from dotenv import load_dotenv
+from datetime import datetime
 
-# Load environment variables
-load_dotenv()
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-# Initialize Redis connection
-redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
-
-# Load system instructions from instruction.txt
-INSTRUCTION_FILE = "instruction.txt"
-if os.path.exists(INSTRUCTION_FILE):
-    with open(INSTRUCTION_FILE, "r", encoding="utf-8") as f:
-        SYSTEM_PROMPT = f.read().strip()
-else:
-    logger.warning("instruction.txt not found, using default system prompt.")
-    SYSTEM_PROMPT = "You are a knowledgeable travel guide specialized in Kazakhstan."
 
 class ChatSession:
     def __init__(self, session_id: str):
         self.session_id = session_id
-        self.history: List[Dict[str, str]] = self._load_history()
-        self.model = self._initialize_model()
-        self.chat = self.model.start_chat(history=self.history)
-    
-    def _load_history(self) -> List[Dict[str, str]]:
-        """Load conversation history from Redis."""
-        try:
-            history_data = redis_client.get(f"chat_history:{self.session_id}")
-            if history_data:
-                return json.loads(history_data)
-            return []
-        except Exception as e:
-            logger.error(f"Error loading history: {e}")
-            return []
-    
-    def _save_history(self):
-        """Save conversation history to Redis."""
-        try:
-            redis_client.set(
-                f"chat_history:{self.session_id}", 
-                json.dumps(self.history),
-                ex=86400  # Expires in 24 hours
-            )
-        except Exception as e:
-            logger.error(f"Error saving history: {e}")
+        self._initialize_model()
 
-    @staticmethod
-    def _initialize_model():
-        """Initialize the Gemini model with system instructions."""
+    def _initialize_model(self):
+        """Initialize the Gemini model."""
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             logger.error("GEMINI_API_KEY environment variable is not set")
             raise ValueError("GEMINI_API_KEY environment variable is not set")
-        
-        genai.configure(api_key=api_key)
-        
-        generation_config = {
-            "temperature": 0.8,
-            "top_p": 0.95,
-            "top_k": 40,
-            "max_output_tokens": 2048,
-            "response_mime_type": "text/plain",
-        }
-        
-        model = genai.GenerativeModel(
-            model_name="gemini-2.0-flash",
-            generation_config=generation_config
-        )
 
-        # Start the chat with system instructions
-        return model.start_chat(history=[{"role": "system", "parts": [SYSTEM_PROMPT]}])
+        try:
+            genai.configure(api_key=api_key)
 
+            generation_config = {
+                "temperature": 0.9,
+                "top_p": 1,
+                "top_k": 1,
+                "max_output_tokens": 2048,
+            }
+
+            safety_settings = [
+                {
+                    "category": "HARM_CATEGORY_HARASSMENT",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                },
+                {
+                    "category": "HARM_CATEGORY_HATE_SPEECH",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                },
+                {
+                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                },
+                {
+                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                },
+            ]
+
+            self.model = genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                generation_config=generation_config,
+                safety_settings=safety_settings
+            )
+
+            self.chat = self.model.start_chat(history=[])
+            logger.info(f"Chat model initialized successfully for session {self.session_id}")
+
+        except Exception as e:
+            logger.error(f"Error initializing model: {str(e)}")
+            raise
+    
     def send_message(self, message: str) -> str:
         """Send a message and get a response from the model."""
-        if not message.strip():
-            raise ValueError("Message cannot be empty")
-        
         try:
-            # Add user message to history
-            self.history.append({"role": "user", "parts": [message]})
-            
-            # Get response from model
+            if not message.strip():
+                raise ValueError("Message cannot be empty")
+
+            logger.debug(f"Sending message to model: {message[:50]}...")
             response = self.chat.send_message(message)
-            model_response = response.text.strip()
+
+            if not response.text:
+                raise ValueError("Empty response from model")
             
-            # Add model response to history
-            self.history.append({"role": "model", "parts": [model_response]})
-            
-            # Save updated history
-            self._save_history()
-            
-            return model_response
+            logger.debug(f"Received clean response from model: {response.text[:50]}...")
+            return response.text.strip()
+
         except Exception as e:
-            logger.error(f"Error sending message: {e}")
+            logger.error(f"Error in send_message: {str(e)}")
             raise

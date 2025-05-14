@@ -503,6 +503,7 @@ body.sidenav-open #header {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    padding: var(--spacing-medium);
 }
 
 .ai-chat-input {
@@ -560,12 +561,14 @@ body.sidenav-open #header {
 }
 
 .user-message, .bot-message {
-    padding: var(--spacing-medium);
-    margin-bottom: var(--spacing-small);
+    padding: var(--spacing-small) var(--spacing-large);
+    margin-bottom: var(--spacing-large);
     border-radius: var(--border-radius-small);
     color: var(--text-primary);
     max-width: 80%; /* Prevent messages from taking up the whole width */
     word-wrap: break-word; /* Handle long messages */
+    font-size: var(--font-size-small);
+    text-align: left;
 }
 .user-message {
     background-color: var(--bg-medium-dark);
@@ -574,6 +577,7 @@ body.sidenav-open #header {
 .bot-message {
     background-color: var(--bg-dark);
     align-self: flex-start; /* Align bot messages to the left */
+    overflow: hidden; /* Hide overflow */
 }
 
 /* Right Side Styles */
