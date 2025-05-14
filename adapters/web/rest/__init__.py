@@ -1,7 +1,7 @@
 from flask import Blueprint
-from adapters.web.rest.user_routes import user_blueprint
-from adapters.web.rest.auth_routes import auth_blueprint
-from adapters.web.error_handlers import handle_exception
+from api_gateway.routes.user_routes import user_blueprint
+from api_gateway.routes.auth_routes import auth_blueprint
+from adapters.error_handlers.error_handlers import handle_exception
 
 api_blueprint = Blueprint("api", __name__)
 

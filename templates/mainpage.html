@@ -6,13 +6,35 @@ Home - Jeruyiq
 
 {% block extra_css %}
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-<link rel="stylesheet" href="{{ url_for('static', filename='mainpage.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='/css/mainpage.css') }}" />
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
 <nav id="mySidenav" class="sidenav">
   <button class="logo" id="logo-button"></button>
+  <div class="sidenav-options">
+    <button class="sidenav-option-button sidenav-feed" id="sidenav-feed">
+      <img src="{{ url_for('static', filename='/images/icons/feed-icon.png') }}">
+      <p class="sidenav-option-text">Feed</p>
+    </button>
+    <button class="sidenav-option-button sidenav-services" id="sidenav-services">
+      <img src="{{ url_for('static', filename='/images/icons/services-icon.png') }}">
+      <p class="sidenav-option-text">Services</p>
+    </button>
+    <button class="sidenav-option-button sidenav-chats" id="sidenav-chats">
+      <img src="{{ url_for('static', filename='/images/icons/chat-icon.png') }}">
+      <p class="sidenav-option-text">Chats</p>
+    </button>
+    <button class="sidenav-option-button sidenav-bookmarks" id="sidenav-bookmarks">
+      <img src="{{ url_for('static', filename='/images/icons/bookmark-icon.png') }}">
+      <p class="sidenav-option-text">Bookmarks</p>
+    </button>
+    <button class="sidenav-option-button sidenav-settings" id="sidenav-settings">
+      <img src="{{ url_for('static', filename='/images/icons/settings-icon.png') }}">
+      <p class="sidenav-option-text">Settings</p>
+    </button>
+  </div>
   <button class="profile-container">
     <div class="profile-pic"></div>
     <div class="profile-info">
@@ -30,19 +52,19 @@ Home - Jeruyiq
         <div class="search-container">
           <div class="searchbar">
             <button id="location-search-button">
-              <img src="{{ url_for('static', filename='/images/search-icon.png') }}">
+              <img src="{{ url_for('static', filename='/images/icons/search-icon.png') }}">
             </button>
             <input type="text" class="searchbox" placeholder="Search...">
           </div>
           <div class="search-container-btns">
             <button class="filter-btn" id="filter-btn" alt="Filter">
-              <img src="{{ url_for('static', filename='/images/filters-icon.png') }}">
+              <img src="{{ url_for('static', filename='/images/icons/filters-icon.png') }}">
             </button>
             <button class="add-location-btn" id="add-location-btn" alt="Add location">
-              <img src="{{ url_for('static', filename='/images/add-location-icon.png') }}">
+              <img src="{{ url_for('static', filename='/images/icons/add-location-icon.png') }}">
             </button>
             <button class="route-btn" id="route-btn" alt="Route">
-              <img src="{{ url_for('static', filename='/images/route-icon.png') }}">
+              <img src="{{ url_for('static', filename='/images/icons/route-icon.png') }}">
             </button>
           </div>
           <div id="filter-options-panel" class="filter-options-panel">
@@ -54,10 +76,10 @@ Home - Jeruyiq
                   <span class="toggle-track" draggable="false">
                     <span class="toggle-thumb" draggable="false">
                         <span class="manual-icon" draggable="false">
-                          <img src="{{ url_for('static', filename='/images/filters-icon-grey.png') }}">
+                          <img src="{{ url_for('static', filename='/images/icons/filters-icon-grey.png') }}">
                         </span>
                         <span class="ai-icon" draggable="false">
-                          <img src="{{ url_for('static', filename='/images/robot-icon.png') }}">
+                          <img src="{{ url_for('static', filename='/images/icons/robot-icon.png') }}">
                         </span>
                     </span>
                   </span>
@@ -71,7 +93,7 @@ Home - Jeruyiq
       
             <div id="ai-filter" class="tab-content">
               <div class="ai-chat-container" id="ai-chat-container">
-                <div id="ai-chat-log" class="ai-chat-log"></div>
+                <div id="ai-chat-log" class="ai-chat-log" role="log" aria-live="polite"></div>
                 <div class="ai-chat-input">
                   <div class="ai-chat-input-container">
                     <input type="text" id="ai-chat-input" placeholder="Ask anything...">
@@ -80,13 +102,13 @@ Home - Jeruyiq
                   <div class="ai-chat-buttons-container">
                     <div class="ai-tool-buttons">
                       <button id="attach-file">
-                        <img src="{{ url_for('static', filename='/images/attach-icon.png') }}">
+                        <img src="{{ url_for('static', filename='/images/icons/attach-icon.png') }}">
                       </button>
                     </div>
 
                     <div class="ai-send-button">
                       <button id="send-message">
-                        <img src="{{ url_for('static', filename='/images/send-icon.png') }}">
+                        <img src="{{ url_for('static', filename='/images/icons/send-icon.png') }}">
                       </button>
                     </div>
                   </div>
@@ -115,5 +137,5 @@ Home - Jeruyiq
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.1/purify.min.js"></script>
-<script type="module" defer src="{{ url_for('static', filename='mainpage.js') }}"></script>
+<script type="module" defer src="{{ url_for('static', filename='/js/mainpage.js') }}"></script>
 {% endblock %}
