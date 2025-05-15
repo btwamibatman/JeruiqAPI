@@ -1,26 +1,23 @@
 import bcrypt
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class PasswordHasher:
 
     @staticmethod
-    def hash_password(password) -> str:
+    def hash_password(password: str) -> str:
         """Хеширование пароля с bcrypt"""
-        print(password)
+        logger.debug(f"Hashing password: {password}")
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        print("THIS IS HASH:", hashed_password)
-        print("THIS IS len(HASH):", len(hashed_password))
+        logger.debug(f"Hashed password: {hashed_password}, length: {len(hashed_password)}")
         return hashed_password
-
 
     @staticmethod
     def verify_password(password, password_hash) -> bool:
         """Проверка пароля"""
-        # if isinstance(password_hash, str):
-        #     password_hash = password_hash.encode()  # Приводим строку к байтам
-        # print("THIS IS HASH:", bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8")))
-        # return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
-        userBytes = password.encode('utf-8') 
-
-        print(password_hash)
-        print(password)
-        return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
+        try:
+            return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
+        except Exception as e:
+            logger.error(f"Error verifying password: {str(e)}")
+            return False

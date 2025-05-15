@@ -55,7 +55,7 @@ nav a:hover {
     padding: 9rem 6rem 9rem 6rem;
     justify-content: space-between;
     align-items: center;
-    background: url('images/almaty-glacier.jpg') no-repeat center center fixed;
+    background: url('/static/images/almaty-glacier.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 .main-section-text {

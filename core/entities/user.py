@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, DateTime
 from infrastructure.db.base import Base
 from domain.models.user import User
 from datetime import datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 class UserModel(Base):
     __tablename__ = "users"
@@ -18,7 +18,7 @@ class UserModel(Base):
 
     def to_entity(self) -> User:
         return User(
-            user_id=uuid4(self.user_id),  # Convert string to UUID
+            user_id=UUID(self.user_id),  # Parse the string as a UUID
             name=self.name,
             email=self.email,
             password_hash=self.password_hash,
@@ -26,4 +26,4 @@ class UserModel(Base):
             role=self.role,
             created_at=self.created_at,
             updated_at=self.updated_at
-        )
+            )

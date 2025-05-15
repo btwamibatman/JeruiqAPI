@@ -6,7 +6,6 @@ from utils.permission_utils import require_permission, Permission
 role_bp = Blueprint("role", __name__)
 
 @role_bp.route('/users/<user_id>/role', methods=['PUT'])
-@token_required
 @require_permission(Permission.MANAGE_USERS)
 def update_role(current_user, user_id):
     data = request.get_json()

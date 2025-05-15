@@ -1,12 +1,16 @@
 from sqlalchemy import create_engine
-from dotenv import load_dotenv
-import os
+from sqlalchemy.orm import sessionmaker, scoped_session
+from infrastructure.config import ActiveConfig
 
-# Загружаем .env
-load_dotenv()
+# Use the DATABASE_URL from config
+engine = create_engine(ActiveConfig.DATABASE_URL)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL не найден в .env")
+# Create a session factory
+SessionFactory = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
-engine = create_engine(DATABASE_URL)
+# Create a scoped session for thread-safe operations
+Session = scoped_session(SessionFactory)
+
+def dispose_engine():
+    """Dispose the engine to release resources."""
+    engine.dispose()

@@ -5,65 +5,69 @@ from core.use_cases.user_login import UserLogin
 from core.ports.user_repository import UserRepository
 from adapters.auth.jwt_auth import JWTAuthService
 from adapters.repositories.sqlalchemy.user_repository import SQLAlchemyUserRepository
-from domain.services.user_service.user_service import UserService  # Added
+from adapters.schemas.user_schema import UserCreateSchema, UserResponseSchema
+from domain.services.user_service.user_service import UserService
+from infrastructure.config import ActiveConfig
+import datetime
 
-auth_blueprint = Blueprint("auth", __name__)
-
-# Initialize services
+# Initialize services and repository
 auth_service = JWTAuthService()
 user_repo: UserRepository = SQLAlchemyUserRepository()
 user_registration = UserRegistration(user_repo, auth_service)
 user_login = UserLogin(user_repo, auth_service)
 
-@auth_blueprint.route("/register", methods=["POST"])
-def register_user():
-    """Register a new user"""
-    data = request.get_json()
+# Configure logging
+logging.basicConfig(level=ActiveConfig.LOG_LEVEL)
+logger = logging.getLogger(__name__)
 
-    required_fields = ["name", "email", "password", "phone_number"]
-    if not all(field in data for field in required_fields):
-        return jsonify({"error": "Missing required fields"}), 400
+auth_bp = Blueprint("auth", __name__)
+
+@auth_bp.route("/register", methods=["POST"])
+def register_user():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
 
     try:
-        # Check if user already exists
-        if user_repo.get_by_email(data["email"]):
+        user_data = UserCreateSchema(**data)
+        if user_repo.get_by_email(user_data.email):
             return jsonify({"error": "Email already registered"}), 400
 
-        user = UserService.create_user(
-            email=data["email"],
-            password=data["password"],
-            name=data["name"],
-            phone_number=data["phone_number"]
+        user = user_registration.execute(
+            email=user_data.email,
+            password=user_data.password,  # Already hashed by UserCreateSchema
+            name=user_data.name,
+            phone_number=user_data.phone_number
         )
-        user_repo.save(user)  # Save the domain User
-
-        logging.info(f"User {data['email']} registered successfully.")
-        return jsonify({
-            "message": "User registered successfully",
-            "user_id": str(user.user_id)
-        }), 201
-
+        logger.info(f"User {user_data.email} registered successfully at {datetime.datetime.now()}")
+        user_response = UserResponseSchema.from_orm(user)
+        return jsonify({"message": "User registered successfully", "user": user_response.dict()}), 201
+    except ValueError as e:
+        logger.warning(f"Registration failed for email {data.get('email', 'unknown')}: {str(e)}")
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logging.error(f"Registration error: {str(e)}")
+        logger.error(f"Registration error for email {data.get('email', 'unknown')}: {str(e)}")
         return jsonify({"error": "An unexpected error occurred"}), 500
 
-@auth_blueprint.route("/login", methods=["POST"])
+@auth_bp.route("/api/auth/login", methods=["POST"])
 def login():
-    """User login"""
+    """User login endpoint"""
     data = request.get_json()
-
-    if not all(k in data for k in ["email", "password"]):
-        return jsonify({"error": "Email and password required"}), 400
+    if not data or not all(k in data for k in ["email", "password"]):
+        return jsonify({"error": "Email and password are required"}), 400
 
     try:
         user = user_repo.get_by_email(data["email"])
         if not user or not UserService.verify_password(user, data["password"]):
+            logger.warning(f"Login failed for email {data['email']}: Invalid credentials")
             return jsonify({"error": "Invalid email or password"}), 401
         token = auth_service.generate_token(user.user_id, user.email)
 
-        logging.info(f"User {data['email']} logged in successfully.")
-        return jsonify({"access_token": token}), 200
+        logger.info(f"User {data['email']} logged in successfully at {datetime.datetime.now()}")
+        user_response = UserResponseSchema.from_orm(user)
+        response = {"access_token": token, "user": user_response.dict()}
+        return jsonify(response), 200
 
     except Exception as e:
-        logging.error(f"Login error: {str(e)}")
+        logger.error(f"Login error for email {data.get('email', 'unknown')}: {str(e)}")
         return jsonify({"error": "An unexpected error occurred"}), 500

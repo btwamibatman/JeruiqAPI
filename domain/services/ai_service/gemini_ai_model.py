@@ -15,34 +15,30 @@ class ChatSession:
         self.instructions = self._load_instructions()
         self._initialize_model()
 
+    # domain/services/ai_service/gemini_ai_model.py
     def _load_config(self) -> dict:
-        """Load configuration from config.yaml."""
         try:
-            config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+            config_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "infrastructure", "config", "ai_service", "config.yaml")
             with open(config_path, "r") as config_file:
                 config = yaml.safe_load(config_file)
             logger.info(f"Loaded configuration from {config_path}")
             return config
         except FileNotFoundError:
             logger.error("config.yaml not found")
-            raise FileNotFoundError("config.yaml not found in services/ai_service/")
+            raise FileNotFoundError("config.yaml not found in infrastructure/config/ai_service/")
         except yaml.YAMLError as e:
             logger.error(f"Error parsing config.yaml: {str(e)}")
             raise
 
     def _load_instructions(self) -> dict:
-        """Load instructions from instructions.yaml and insert current date/time."""
         try:
-            instructions_path = os.path.join(os.path.dirname(__file__), "instructions.yaml")
+            instructions_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "infrastructure", "config", "ai_service", "instructions.yaml")
             with open(instructions_path, "r") as instructions_file:
                 instructions = yaml.safe_load(instructions_file)
             logger.info(f"Loaded instructions from {instructions_path}")
-            # Insert current date and time into system_prompt
             if "system_prompt" in instructions:
                 current_time = datetime.now().strftime("%I:%M %p %z on %A, %B %d, %Y")
-                instructions["system_prompt"] = instructions["system_prompt"].replace(
-                    "05:08 PM +05 on Wednesday, May 14, 2025", current_time
-                )
+                instructions["system_prompt"] = instructions["system_prompt"].format(current_time=current_time)
             return instructions
         except FileNotFoundError:
             logger.warning("instructions.yaml not found, using empty instructions")

@@ -10,6 +10,6 @@ class UserLogin:
 
     def login_user(self, email: str, password: str) -> str:
         user = self.user_repository.get_by_email(email)
-        if not user or not UserService.verify_password(user, password):
+        if not user or not self.auth_service.verify_password(password, user.password_hash):
             raise ValueError("Invalid email or password")
         return self.auth_service.generate_token(user.user_id, user.email)

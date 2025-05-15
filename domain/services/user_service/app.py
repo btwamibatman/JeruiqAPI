@@ -1,10 +1,10 @@
 from flask import Flask
 import logging
-from adapters.web.rest.user_routes import user_blueprint as user_bp
-from adapters.web.rest.auth_routes import auth_blueprint as auth_bp  # Assuming auth_routes contains role-related routes
-from adapters.web.rest.chat_routes import chat_blueprint as chat_bp  # Add chat routes
-from adapters.web.rest.health_check import health_bp as health_bp
-from infrastructure.db.session import init_db  # Adjust based on your structure
+from api_gateway.routes.user_routes import user_bp
+from api_gateway.routes.auth_routes import auth_bp
+from api_gateway.routes.health_check import health_bp
+from adapters.routes.chat_routes import chat_bp
+from infrastructure.db.session import init_db
 from infrastructure.config import Config
 
 app = Flask(__name__)

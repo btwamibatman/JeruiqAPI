@@ -20,8 +20,8 @@ app.config['DEBUG'] = True  # Включаем режим отладки
 # Register blueprints
 from adapters.web.rest import api_blueprint
 from adapters.error_handlers.error_handlers import handle_exception
-from controllers.frontend import frontend_bp
-from controllers.chat_routes import chat_bp
+from presentation.frontend import frontend_bp
+from presentation.routes.chat_routes import chat_bp
 
 app.register_blueprint(api_blueprint)
 app.register_blueprint(frontend_bp)

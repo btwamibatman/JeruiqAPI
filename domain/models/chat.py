@@ -7,7 +7,7 @@ from typing import List, Optional
 class Chat:
     session_id: UUID
     user_id: UUID
-    messages: List[dict] = None  # List of {"role": "user" or "ai", "content": str}
+    messages: List[dict] = None
     created_at: datetime = datetime.utcnow()
     updated_at: Optional[datetime] = None
 
@@ -20,6 +20,12 @@ class Chat:
             self.messages = []
         if not isinstance(self.messages, list):
             raise ValueError("Messages must be a list")
+        # Validate message structure
+        for msg in self.messages:
+            if not isinstance(msg, dict) or "role" not in msg or "content" not in msg:
+                raise ValueError("Each message must be a dict with 'role' and 'content' keys")
+            if msg["role"] not in ["user", "ai"]:
+                raise ValueError("Message role must be 'user' or 'ai'")
 
     def add_message(self, role: str, content: str) -> None:
         if role not in ["user", "ai"]:

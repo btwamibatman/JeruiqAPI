@@ -9,3 +9,6 @@ bcrypt
 google-generativeai
 logging
 pyyaml
+jwt_auth
+requests
+pydantic

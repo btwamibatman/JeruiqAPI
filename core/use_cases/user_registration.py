@@ -9,10 +9,11 @@ class UserRegistration:
         self.auth_service = auth_service
 
     def register_user(self, name: str, email: str, password: str, phone_number: str) -> User:
+        hashed_password = self.auth_service.hash_password(password)
         user = UserService.create_user(
             name=name,
             email=email,
-            password=password,
+            password=hashed_password,  # Pass the hashed password
             phone_number=phone_number
         )
         self.user_repository.save(user)

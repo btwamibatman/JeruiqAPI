@@ -27,7 +27,6 @@ def create_profile():
     return jsonify({'message': 'Profile created successfully', 'user_id': new_profile.user_id}), 201
 
 @user_bp.route('/users', methods=['GET'])
-@token_required
 @require_permission(Permission.MANAGE_USERS)
 def get_all_users(current_user):
     db = get_db()
@@ -45,7 +44,6 @@ def get_all_users(current_user):
     ]), 200
 
 @user_bp.route('/users/<user_id>', methods=['GET'])
-@token_required
 def get_user(current_user, user_id):
     if user_id != current_user.get('sub') and not Permission.has_permission(current_user.get('role'), Permission.MANAGE_USERS):
         return jsonify({'message': 'Permission denied'}), 403

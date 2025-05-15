@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID, uuid4
 from datetime import datetime
 from typing import Optional
+from core.entities.role import Role
 
 @dataclass
 class User:
@@ -23,7 +24,7 @@ class User:
             raise ValueError("Invalid email address")
         if not self.password_hash:
             raise ValueError("Password hash is required")
-        if self.role not in ["user", "admin"]:
+        if not Role.is_valid(self.role):  # Use Role from core.entities
             raise ValueError("Invalid role")
         if self.phone_number and len(self.phone_number) < 5:
             raise ValueError("Phone number is too short")

@@ -8,7 +8,8 @@ function initAIChat() {
     const chatLog = document.getElementById('ai-chat-log');
     const chatInput = document.getElementById('ai-chat-input');
     const sendButton = document.getElementById('send-message');
-    let sessionId = null;
+    let sessionId = localStorage.getItem('chatSessionId') || null;
+    let authToken = localStorage.getItem('authToken') || null; // Store auth token
 
     function appendMessage(message, sender, isHTML = false) {
         const messageDiv = document.createElement('div');
@@ -27,93 +28,124 @@ function initAIChat() {
     async function sendMessage() {
         const message = chatInput.value.trim();
         if (!message) return;
-    
+
+        if (!authToken) {
+            appendMessage('Please log in to use the chat.', 'bot');
+            return;
+        }
+
         try {
             console.log('Sending message:', message);
             console.log('Session ID:', sessionId);
-    
+
             if (!sessionId) {
                 console.log('No session ID found, initializing chat...');
                 await initializeChat();
             }
-    
+
             appendMessage(message, 'user');
             chatInput.value = '';
-    
+
             const response = await fetch('/api/chat/send_message', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}` // Add auth token
                 },
                 body: JSON.stringify({
                     message: message,
                     session_id: sessionId
                 })
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
-    
+
             const data = await response.json();
             console.log('Server response:', data);
             appendMessage(data.response, 'bot', true);
-    
+            sessionId = data.session_id;
+            localStorage.setItem('chatSessionId', sessionId);
+
         } catch (error) {
             console.error('Error:', error);
-            appendMessage('Error: Couldn’t connect—let’s try again! What do you love about nature?', 'bot');
-            await initializeChat(); // Reinitialize chat on any error
+            appendMessage('Error: Couldn’t connect—let’s try again! Please log in if needed.', 'bot');
+            await initializeChat();
         }
     }
 
     async function initializeChat() {
+        if (!authToken) {
+            appendMessage('Please log in to start a chat.', 'bot');
+            return;
+        }
+
         try {
             console.log('Initializing chat session...');
             const response = await fetch('/api/chat/create_session', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}` // Add auth token
                 }
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
-    
+
             const data = await response.json();
             sessionId = data.session_id;
+            localStorage.setItem('chatSessionId', sessionId);
             console.log('Chat session initialized with ID:', sessionId);
-    
+
             chatLog.innerHTML = '';
             appendMessage('Hello! How can I help you explore Kazakhstan today?', 'bot');
-    
+
         } catch (error) {
             console.error('Error initializing chat session:', error);
-            appendMessage('Error connecting to chat service. Please try again in a moment.', 'bot');
-            // Add a retry mechanism
+            appendMessage('Error connecting to chat service. Please try again or log in.', 'bot');
             setTimeout(initializeChat, 5000);
         }
     }
 
-    initializeChat();
+    // Example login handler
+    async function login(email, password) {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('authToken', data.token);
+            authToken = data.token;
+            initializeChat();
+    }
+}
+
+    if (!authToken) {
+        appendMessage('Resuming requires login. Please log in to continue.', 'bot');
+    } else if (!sessionId) {
+        initializeChat();
+    } else {
+        appendMessage('Resuming previous chat session...', 'bot');
+    }
 
     if (sendButton && chatInput) {
         sendButton.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+            if (e.key === 'Enter') sendMessage();
         });
     } else {
-        console.error("Chat input elements not found!");
+        console.error('Chat input elements not found!');
     }
 
     function resetScroll() {
-        if (chatLog) {
-            chatLog.scrollTop = chatLog.scrollHeight;
-        }
+        if (chatLog) chatLog.scrollTop = chatLog.scrollHeight;
     }
 
     function debounce(func, wait) {
@@ -134,18 +166,13 @@ function initAIChat() {
         debouncedResetScroll();
     }
 
-    const resizeObserver = new ResizeObserver(() => {
-        debouncedResetScroll();
-    });
-
+    const resizeObserver = new ResizeObserver(() => debouncedResetScroll());
     if (chatContainer) {
         resizeObserver.observe(chatContainer);
         resizeObserver.observe(chatLog);
     }
 
-    const observer = new MutationObserver(() => {
-        debouncedResetScroll();
-    });
+    const observer = new MutationObserver(() => debouncedResetScroll());
     if (chatLog) {
         observer.observe(chatLog, { childList: true, subtree: true });
     }
@@ -165,10 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.getElementById('header');
     let isNavOpen = false;
 
-    if (!logoButton) console.error("Logo button not found!");
-    if (!sidenav) console.error("Sidenav not found!");
-    if (!mainContent) console.error("Main content not found!");
-    if (!body) console.error("Body element not found!");
+    if (!logoButton) console.error('Logo button not found!');
+    if (!sidenav) console.error('Sidenav not found!');
+    if (!mainContent) console.error('Main content not found!');
+    if (!body) console.error('Body element not found!');
 
     // --- Cesium Initialization ---
 
@@ -223,11 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
         isNavOpen ? closeNav() : openNav();
     });
 
-    // --- Search Button and Script ---
     const searchButton = document.getElementById('location-search-button');
     const searchInput = document.querySelector('.searchbar .searchbox');
     
-    // Create search error container if it doesn't exist
     let searchErrorContainer = document.getElementById('search-error');
     if (!searchErrorContainer) {
         searchErrorContainer = document.createElement('div');
@@ -255,14 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data && data.length > 0) {
                         const latitude = parseFloat(data[0].lat);
                         const longitude = parseFloat(data[0].lon);
-                        flyToLocation(latitude, longitude);
+                        // flyToLocation(latitude, longitude); // Uncomment if Cesium is reintroduced
                         searchInput.value = '';
                     } else {
                         showSearchError(`Location "${query}" not found.`);
                     }
                 } catch (error) {
-                    console.error("Nominatim fetch error:", error);
-                    showSearchError("Search failed. Please try again later.");
+                    console.error('Nominatim fetch error:', error);
+                    showSearchError('Search failed. Please try again later.');
                 }
             }
         });
@@ -297,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Filter Button and Script ---
     const filterButton = document.getElementById('filter-btn');
     const filterOptionsPanel = document.getElementById('filter-options-panel');
     const filterModeCheckbox = document.getElementById('filter-mode-checkbox');
@@ -344,6 +368,5 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more filter elements not found in the DOM!");
     }
 
-    // Initialize the chat functionality
     initAIChat();
 });

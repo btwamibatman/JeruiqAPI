@@ -1,8 +1,8 @@
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import pool
 from alembic import context
 from infrastructure.db import Base
-from infrastructure.db.session import engine
+from infrastructure.config import ActiveConfig
 
 # Читаем настройки Alembic
 config = context.config
@@ -15,13 +15,14 @@ target_metadata = Base.metadata
 
 def run_migrations_offline():
     """Генерация SQL-файлов без подключения к базе"""
-    context.configure(url=engine.url, target_metadata=target_metadata, literal_binds=True)
+    context.configure(url=ActiveConfig.DATABASE_URL, target_metadata=target_metadata, literal_binds=True)
     with context.begin_transaction():
         context.run_migrations()
 
 def run_migrations_online():
     """Обычные миграции в подключенной БД"""
-    connectable = engine
+    from sqlalchemy import create_engine
+    connectable = create_engine(ActiveConfig.DATABASE_URL)
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
