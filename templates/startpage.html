@@ -13,91 +13,253 @@ Get Started - Jeruyiq
 {% endblock %}
 
 {% block body %}
-<header>
-    <div class="container">
-        <div class="navbar-logo">
-            <a class="logo" href="/">Jeruyıq</a>
+<!-- Header -->
+<header class="absolute top-0 left-0 right-0 z-10">
+    <nav class="container mx-auto px-6 py-6 flex justify-between items-center">
+        <div class="navbar-logo md:flex space-x-8 items-center">
+            <a href="/" class="text-4xl font-bold w-[9rem] h-[3rem]">Jeruyıq</a>
         </div>
-        <nav>
-            <a href="#main-section">Home</a>
-            <a href="#content-section">About us</a>
-            <a href="#features-section">Features</a>
-            <a href="#contacts-section">Contacts</a>
-        </nav>
-        <div class="auth-buttons">
-            <button id="signup-button" href="signup.html">Sign Up</button>
-            <button id="login-button" href="login.html">Log In</button>
+        <div class="md:flex space-x-8 items-center px-8 py-2 rounded-2xl backdrop-blur-xs border border-white">
+            <a href="#destinations" class="text-white-300 hover:text-[--accent-color-light] transition-colors duration-300">Destinations</a>
+            <a href="#experiences" class="text-white-300 hover:text-[--accent-color-light] transition-colors duration-300">Experiences</a>
+            <a href="#culture" class="text-white-300 hover:text-[--accent-color-light] transition-colors duration-300">Culture</a>
+            <a href="#plan" class="text-white-300 hover:text-[--accent-color-light] transition-colors duration-300">Planning</a>
         </div>
-    </div>
+        <button class="bg-[--accent-color-dark] hover:bg-[--accent-color] w-[9rem] h-[3rem] text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
+            <a href="/login">Login</a>
+        </button>
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button" class="md:hidden text-white">
+            <i class="fas fa-bars fa-2x"></i>
+        </button>
+    </nav>
 </header>
 
-<main>
-    <section id="main-section">
-        <div class="main-section-text">
-            <h1>Travelling is an Investment in Yourself</h1>
-            <p>Discover the world around you from new perspectives</p>  
-        </div>
-        <div class="chat-container">
-            <div class="chatbot">
-                <div class="chatbot-header">
-                    <h2>Jeruyiq AI</h2>
-                </div>
-                <div class="chatbot-messages">
-                    <div class="message bot-message">Hello! How can I assist you today?</div>
-                </div>
-                <div class="chatbot-input">
-                    <input type="text" placeholder="Search...">
-                    <button></button>
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden md:hidden fixed inset-0 bg-black bg-opacity-90 z-40">
+    <div class="flex justify-end p-6">
+            <button id="close-mobile-menu" class="text-white">
+            <i class="fas fa-times fa-2x"></i>
+        </button>
+    </div>
+    <div class="flex flex-col items-center justify-center h-full space-y-8">
+        <a href="#destinations" class="text-2xl text-gray-300 hover:text-white transition-colors duration-300 mobile-menu-link">Destinations</a>
+        <a href="#experiences" class="text-2xl text-gray-300 hover:text-white transition-colors duration-300 mobile-menu-link">Experiences</a>
+        <a href="#culture" class="text-2xl text-gray-300 hover:text-white transition-colors duration-300 mobile-menu-link">Culture</a>
+        <a href="#plan" class="text-2xl text-gray-300 hover:text-white transition-colors duration-300 mobile-menu-link">Planning</a>
+        <a href="/login" class="bg-[--accent-color-dark] hover:bg-[--accent-color] text-white font-bold py-3 px-8 rounded-full text-lg transition-colors duration-300">Login</a>
+    </div>
+</div>
+
+<section class="hero-section flex items-center justify-center text-center text-white">
+    <video autoplay muted loop class="hero-video-bg">
+        <source src="/static/videos/almaty_view.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="z-0 reveal active">
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-4" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">
+            Kazakhstan
+        </h1>
+        <p class="text-xl md:text-2xl font-light mb-8" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">
+            Where a Thousand Stories Unfold
+        </p>
+        <a href="#destinations" class="bg-[--accent-color-dark] hover:bg-[--accent-color] text-white font-bold py-3 px-8 rounded-full text-lg transition-colors duration-300">
+            Start Your Adventure
+        </a>
+    </div>
+</section>
+
+<!-- Destinations Section -->
+<section id="destinations" class="py-20 bg-gray-900">
+    <div class="container mx-auto px-6 reveal">
+        <h2 class="section-title text-white">Featured Destinations</h2>
+        <p class="section-subtitle">From futuristic cities to ancient landscapes, discover the diverse beauty of Kazakhstan.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            <!-- Astana Card -->
+            <div class="lg:col-span-2 relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                <img src="/static/images/astana-expo.jpg" class="w-full h-full object-cover" alt="Astana skyline" onerror="this.onerror=null;this.src='https://placehold.co/600x400/334155/FFFFFF?text=Astana';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-6">
+                    <h3 class="text-3xl font-bold text-white">Astana</h3>
+                    <p class="text-gray-200">The futuristic capital, a marvel of modern architecture.</p>
                 </div>
             </div>
-        </div>   
-    </section>
-
-    <section id="content-section">
-        <div class="content-section-text">
-            <h1>Who we are?</h1>
-            <p>We are a small group of enthusiasts developing an application for the development of tourism in Kazakhstan through the involvement of people in domestic tourism, as well as tourists from other countries.</p>
-        </div>
-    </section>
-
-    <section id="features-section">
-        <div class="features-section-text">
-            <h1>Features</h1> 
-        </div>
-        <div class="features-section-cards">
-            <div class="card">
-                <h2>Personalized Recommendations</h2>
-                <p>Get travel recommendations tailored to your preferences.</p>
+            <!-- Almaty Card -->
+            <div class="lg:col-span-3 relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                <img src="/static/images/almaty-koktobe.avif" class="w-full h-full object-cover" alt="Almaty mountains" onerror="this.onerror=null;this.src='https://placehold.co/600x400/334155/FFFFFF?text=Almaty';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-6">
+                    <h3 class="text-3xl font-bold text-white">Almaty</h3>
+                    <p class="text-gray-200">The cultural heart, nestled by the majestic Tian Shan mountains.</p>
+                </div>
             </div>
-            <div class="card">
-                <h2>Real-time Updates</h2>
-                <p>Stay updated with the latest travel information and alerts.</p>
+            <!-- Other Destinations -->
+            <div class="relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                <img src="/static/images/turkistan.jpeg" class="w-full h-48 object-cover" alt="Turkistan" onerror="this.onerror=null;this.src='https://placehold.co/400x300/334155/FFFFFF?text=Turkistan';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-4">
+                    <h4 class="text-xl font-bold text-white">Turkistan</h4>
+                </div>
             </div>
-            <div class="card">
-                <h2>Community Engagement</h2>
-                <p>Connect with other travelers and share your experiences.</p>
+            <div class="relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                <img src="/static/images/mangystau.jpeg" class="w-full h-48 object-cover" alt="Mangystau" onerror="this.onerror=null;this.src='https://placehold.co/400x300/334155/FFFFFF?text=Mangystau';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-4">
+                    <h4 class="text-xl font-bold text-white">Mangystau</h4>
+                </div>
+            </div>
+            <div class="relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                <img src="/static/images/burabay.jpg" class="w-full h-48 object-cover" alt="Burabay" onerror="this.onerror=null;this.src='https://placehold.co/400x300/334155/FFFFFF?text=Burabay';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-4">
+                    <h4 class="text-xl font-bold text-white">Burabay</h4>
+                </div>
+            </div>
+            <div class="relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                    <img src="/static/images/charyn_canyon.jpg" class="w-full h-48 object-cover" alt="Charyn Canyon" onerror="this.onerror=null;this.src='https://placehold.co/400x300/334155/FFFFFF?text=Charyn+Canyon';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-4">
+                    <h4 class="text-xl font-bold text-white">Charyn Canyon</h4>
+                </div>
+            </div>
+            <div class="relative rounded-lg overflow-hidden shadow-lg card-hover-effect">
+                    <img src="/static/images/kolsay_lakes.jpg" class="w-full h-48 object-cover" alt="Kolsay Lakes" onerror="this.onerror=null;this.src='https://placehold.co/400x300/334155/FFFFFF?text=Kolsay+Lakes';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-4">
+                    <h4 class="text-xl font-bold text-white">Kolsai Lakes</h4>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section id="contacts-section">
-        <div class="contacts-section-text">
-            <h1>Contact Us</h1>
-            <p>If you have any questions, feel free to reach out to us!</p>
+<!-- Experiences Section -->
+<section id="experiences" class="parallax" style="background-image: url(/static/images/photo5.jpg);">
+    <div class="py-24 experience-overlay">
+        <div class="container mx-auto px-6 text-center text-white reveal">
+            <h2 class="section-title">Craft Your Unforgettable Story</h2>
+            <p class="section-subtitle">Whether you seek adrenaline, history, or tranquility, your perfect experience awaits.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm p-8 rounded-lg border border-gray-700 card-hover-effect">
+                    <i class="fas fa-mountain-sun text-cyan-400 text-4xl mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-2">Adventure Awaits</h3>
+                    <p class="text-gray-300">Trek majestic peaks, ski pristine slopes, and explore dramatic canyons.</p>
+                </div>
+                <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm p-8 rounded-lg border border-gray-700 card-hover-effect">
+                    <i class="fas fa-route text-cyan-400 text-4xl mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-2">Echoes of the Silk Road</h3>
+                    <p class="text-gray-300">Journey through time, from ancient petroglyphs to grand mausoleums.</p>
+                </div>
+                <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm p-8 rounded-lg border border-gray-700 card-hover-effect">
+                    <i class="fas fa-leaf text-cyan-400 text-4xl mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-2">Pristine Nature</h3>
+                    <p class="text-gray-300">Discover sunken forests, singing dunes, and breathtaking alpine lakes.</p>
+                </div>
+                <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm p-8 rounded-lg border border-gray-700 card-hover-effect">
+                    <i class="fas fa-campground text-cyan-400 text-4xl mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-2">The Soul of the Nomad</h3>
+                    <p class="text-gray-300">Experience timeless hospitality, sleep in a yurt, and meet eagle hunters.</p>
+                </div>
+            </div>
         </div>
-        <div class="contacts-section-form">
-            <form action="/send_message" method="POST">
-                <input type="text" name="name" placeholder="Your Name" required>
-                <input type="email" name="email" placeholder="Your Email" required>
-                <textarea name="message" placeholder="Your Message" required></textarea>
-                <button type="submit">Send Message</button>
-            </form>
-        </div>
-    </section>
-</main>
+    </div>
+</section>
 
-<footer>
-    <div class="footer-text">
-        <p>&copy; 2025 Jeruyiq. All rights reserved.</p>
+<!-- Culture Section -->
+<section id="culture" class="py-20 bg-black">
+    <div class="container mx-auto px-6 reveal">
+        <h2 class="section-title text-white">The Heartbeat of the Steppe</h2>
+        <p class="section-subtitle">Immerse yourself in a culture woven from ancient traditions and vibrant modern life.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-auto md:h-[800px]">
+            <!-- Taste of Kazakhstan -->
+            <div class="md:col-span-2 culture-grid-item group">
+                <img src="/static/images/kazakh_cuisine.jpg" class="w-full h-128 object-cover" alt="Kazakh food" onerror="this.onerror=null;this.src='https://placehold.co/800x600/334155/FFFFFF?text=Kazakh+Cuisine';">
+                <div class="overlay">
+                    <h3 class="text-2xl font-bold">A Taste of Kazakhstan</h3>
+                    <p class="text-gray-300">Savor the rich flavors of the Great Steppe.</p>
+                </div>
+            </div>
+            <!-- People & Music -->
+            <div class="grid grid-rows-2 gap-8">
+                <div class="culture-grid-item group">
+                    <img src="/static/images/kazakh_girls.jpg" class="w-full h-96 object-cover" alt="Kazakh Women" onerror="this.onerror=null;this.src='https://placehold.co/400x300/334155/FFFFFF?text=Kazakh+People';">
+                    <div class="overlay">
+                        <h3 class="text-xl font-bold">People of the Sun</h3>
+                        <p class="text-gray-300 text-sm">Experience legendary hospitality.</p>
+                    </div>
+                </div>
+                <div class="culture-grid-item bg-gray-800 flex flex-col items-center justify-center p-6 text-center">
+                    <h3 class="text-xl font-bold mb-2">Sounds of the Steppe</h3>
+                    <p class="text-gray-400 mb-4">Listen to the soulful melody of the Dombra.</p>
+                    <button id="play-dombra" class="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full h-16 w-16 flex items-center justify-center transition-transform transform hover:scale-110">
+                        <i class="fas fa-play text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Plan Your Trip Section -->
+<section id="plan" class="py-20 bg-gray-900">
+    <div class="container mx-auto px-6 text-center reveal">
+        <h2 class="section-title text-white">Your Journey Starts Here</h2>
+        <p class="section-subtitle">Essential info to make your trip seamless and unforgettable.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 max-w-5xl mx-auto">
+            <div class="flex flex-col items-center">
+                <div class="bg-cyan-500 text-white rounded-full h-20 w-20 flex items-center justify-center mb-4 text-3xl">
+                    <i class="fas fa-passport"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Visa Information</h3>
+                <p class="text-gray-400">Easy e-visa process for many nationalities. Check your eligibility now.</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="bg-cyan-500 text-white rounded-full h-20 w-20 flex items-center justify-center mb-4 text-3xl">
+                    <i class="fas fa-plane-departure"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Getting Around</h3>
+                <p class="text-gray-400">Fly between cities, ride the modern rails, or explore scenic roads.</p>
+            </div>
+                <div class="flex flex-col items-center">
+                <div class="bg-cyan-500 text-white rounded-full h-20 w-20 flex items-center justify-center mb-4 text-3xl">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Find a Tour</h3>
+                <p class="text-gray-400">Connect with trusted local guides and tour operators for the best experience.</p>
+            </div>
+                <div class="flex flex-col items-center">
+                <div class="bg-cyan-500 text-white rounded-full h-20 w-20 flex items-center justify-center mb-4 text-3xl">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Traveler's Guide</h3>
+                <p class="text-gray-400">Learn about local currency, customs, and useful phrases.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-black">
+    <div class="container mx-auto px-6 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-4 md:mb-0">
+                <h3 class="text-2xl font-bold text-white">Jeruyıq</h3>
+                <p class="text-gray-500">Your adventure into the heart of Eurasia.</p>
+            </div>
+            <div class="flex space-x-6 mb-4 md:mb-0">
+                <a href="#" class="text-gray-400 hover:text-cyan-400 text-2xl transition-colors"><i class="fab fa-tiktok"></i></a>
+                <a href="#" class="text-gray-400 hover:text-cyan-400 text-2xl transition-colors"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-cyan-400 text-2xl transition-colors"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <hr class="border-gray-800 my-6">
+        <p class="text-center text-gray-500 text-sm">
+            &copy; 2025 Jeruyıq. All rights reserved.
+        </p>
     </div>
 </footer>
+
+<!-- Tone.js for sound -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+
 {% endblock %}

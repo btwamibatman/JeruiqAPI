@@ -6,6 +6,10 @@ frontend_bp = Blueprint("frontend", __name__, template_folder="templates")
 def start_page():
     return render_template("startpage.html")
 
+@frontend_bp.route("/login")
+def login_page():
+    return render_template("login.html")
+
 @frontend_bp.route("/chat")
 def chat_page():
     return render_template("chat.html")

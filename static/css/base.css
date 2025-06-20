@@ -1,14 +1,16 @@
 /* Color Variables */
 :root {
-    --bg-dark: rgba(30, 30, 30, 1);
-    --bg-medium-dark: rgba(50, 50, 50, 1);
-    --bg-light-dark: rgba(20, 20, 20, 0);
+    --bg-dark: rgba(20, 20, 20, 1);
+    --bg-medium-dark: rgba(40, 40, 40, 1);
+    --bg-light-dark: rgba(60, 60, 60, 1);
     --text-primary: white;
     --text-secondary: #818181;
-    --accent-color: #9C1DE7;
+    --accent-color: #00B8DB;
+    --accent-color-light: cyan;
+    --accent-color-dark: #007A8C;
     --border-color-light: rgba(80, 80, 80, 1);
     --bg-hover: rgba(60, 60, 60, 1);
-    --bg-transparent: rgba(0, 0, 0, 0);
+    --bg-dark-navy: #111827;
 }
 /* Font Variables */
 :root {
@@ -35,50 +37,7 @@
     --transition-duration-medium: 0.3s;
     --transition-duration-slow: 0.5s;
 }
-/* Global Styles */
-body {
-    background: #101010;
-    font-family: 'Geist', sans-serif;
-    text-align: center;
-    color: white;
-    margin: 0;
-    padding: 0;
-    background-image: url('/static/images/almaty-glacier.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+/* Hide scrollbar */
 ::-webkit-scrollbar {
     display: none;
-}
-
-header .container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(1rem);
-    border-bottom: 1px solid grey;
-    padding-right: 6rem;
-    position: fixed;
-    width: 100%;
-    height: 5rem;
-    top: 0;
-    z-index: 1000;
-    transition: opacity 0.5s ease;
-}
-.navbar-logo {
-    display: flex;
-    font-size: 2rem;
-    align-items: center;
-    justify-content: left;
-    padding-left: 6rem;
-    font-weight: bold;
-    width: 6rem;
-}
-.logo {
-    text-decoration: none;
-    color: white;
-}
-.auth-buttons {
-    width: 6rem;
 }

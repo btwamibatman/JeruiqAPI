@@ -1,123 +1,251 @@
-body {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+*{
     margin: 0;
     padding: 0;
-    background-attachment: fixed;
-    background-color: #101010; /* Fallback color */
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
-main {
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-#loginform {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-image: url('images/almaty-glacier.jpg') no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-
-.login-container {
-    background-color: rgba(0, 0, 0, 0.2); /* Tailwind's bg-white */
-    backdrop-filter: blur(1rem);
-    width: 350px; /* Increased width from 300px to 350px */
-    padding: 2rem; /* Tailwind's p-8 (32px), converted to rem */
-    border-radius: 1.5rem; /* Tailwind's rounded-md */
-    border: 1px solid grey;
-    display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
-.login-title {
+#container {
+    background-color: var(--bg-medium-dark);
+    border-radius: 3rem;
+    position: relative;
+    overflow: hidden;
+    width: 72rem;
+    max-width: 100%;
+    min-height: 36rem;
+}
+
+#container h1 {
+    font-size: 2rem;
+    font-weight: 600;
     text-align: center;
-    margin-bottom: 1.5rem; /* Tailwind's mb-6 (24px), converted to rem */
-    font-size: 1.5rem; /* Tailwind's text-2xl (24px), converted to rem */
-    font-weight: 600; /* Tailwind's font-semibold */
-    color: white; /* Tailwind's text-gray-900 */
 }
 
-.form-group {
-    margin-bottom: 1rem; /* Tailwind's mb-4 (16px), converted to rem */
+#container p {
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.3px;
+    margin: 1.25rem 0;
 }
 
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem; /* Tailwind's mb-2 (8px), converted to rem */
-    font-size: 1rem; /* Tailwind's text-sm (14px), converted to rem */
-    color: white; /* Tailwind's text-gray-700 */
-    font-weight: 500;
-    text-align: left;
-    margin-left: 0.8rem;
+#container span {
+    font-size: 0.75rem;
 }
 
-.form-input {
-    width: 100%;
-    padding: 0.75rem; /* Tailwind's p-3 (12px), converted to rem */
-    border-radius: 1rem; /* Tailwind's rounded-md */
-    border: 1px solid #9C1DE7; /* Tailwind's border-gray-300 */
-    background-color: rgba(0, 0, 0, 0.2);
-    color: white;
-    font-size: 1rem; /* Tailwind's text-base (16px), converted to rem */
-    line-height: 1.5rem; /* Tailwind's leading-5 (20px), converted to rem */
-    box-sizing: border-box; /* Ensure padding doesn't affect width */
-    transition: border-color 0.15s ease-in-out, shadow-sm 0.15s ease-in-out; /* Added smooth transition */
+#container a{
+    color: #fff;
+    font-size: 1rem;
+    text-decoration: none;
+    margin: 1rem 0 0.5rem;
 }
 
-.form-input:focus {
-    outline: none;
-    border-color: #9C1DE7; /* Tailwind's border-blue-500 */
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); /* Tailwind's ring-blue-500 with opacity */
-}
-
-
-.form-button {
-    width: 100%;
-    padding: 0.75rem; /* Tailwind's p-3 (12px), converted to rem */
-    border-radius: 1rem; /* Tailwind's rounded-md */
-    background-color: rgba(0, 0, 0, 0.2); /* Tailwind's bg-blue-500 */
-    color: #ffffff; /* Tailwind's text-white */
-    font-size: 1rem; /* Tailwind's text-base (16px), converted to rem */
-    font-weight: 600; /* Tailwind's font-semibold */
+.form-container button {
+    background-color: var(--accent-color);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.6rem 3rem;
+    border: 1px solid transparent;
+    border-radius: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 1rem;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, transform 0.1s ease; /* Added transform for button press */
-    border: 1px solid grey; /* Tailwind's border-gray-300 */
-    display: inline-flex; /* Use inline-flex for better alignment */
+    transition: all var(--transition-duration-medium) ease-in-out;
+}
+.form-container button:hover {
+    background-color: var(--accent-color-dark);
+    transition: all var(--transition-duration-medium) ease-in-out;
+}
+
+#container form {
+    background-color: var(--bg-medium-dark);
+    display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1.5rem;
-    margin-top: 2rem;
+    flex-direction: column;
+    padding: 0 4rem;
+    height: 100%;
 }
 
-.form-button:hover {
-    background-color: #9C1DE7; /* Tailwind's bg-blue-700 */
+#container input {
+    background-color: var(--bg-light-dark);
+    border: 1px solid transparent;
+    margin: 0.5rem 0;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    outline: none;
+    transition: all var(--transition-duration-fast) ease-in-out;
+}
+#container input:focus {
+    border-color: var(--accent-color);
+    transition: all var(--transition-duration-fast) ease-in-out;
 }
 
-.form-button:active {
-    background-color: #9C1DE7; /* Tailwind's bg-blue-800 */
-    transform: translateY(1px); /* Simulate button press */
+.name-inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 0.5rem;
 }
 
-.forgot-password {
-    text-align: right;
-    margin-top: 0.5rem; /* Tailwind's mt-2 (8px), converted to rem */
-    font-size: 0.875rem; /* Tailwind's text-sm */
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all var(--transition-duration-slow) ease-in-out;
 }
 
-.forgot-password a {
-    color: #9C1DE7; /* Tailwind's text-blue-500 */
-    text-decoration: none;
+.sign-in {
+    left: 0;
+    width: 50%;
+    z-index: 2;
 }
 
-.forgot-password a:hover {
-    text-decoration: underline;
+#container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+#container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move{
+    0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+.social-icons {
+    margin: 1.25rem 0;
+}
+
+.social-icons a{
+    border: 1px solid #ccc;
+    border-radius: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    transition: all var(--transition-duration-medium) ease-in-out;
+}
+.social-icons a:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-color);
+    transition: all var(--transition-duration-medium) ease-in-out;
+}
+
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all var(--transition-duration-slow) ease-in-out;
+    border-radius: 6rem 0 0 6rem;
+    z-index: 1000;
+}
+
+#container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 6rem 6rem 0;
+}
+
+.toggle {
+    background-color: var(--accent-color);
+    height: 100%;
+    background: radial-gradient(var(--accent-color), var(--accent-color-dark));
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all var(--transition-duration-slow) ease-in-out;
+}
+
+#container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 4rem;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all var(--transition-duration-slow) ease-in-out;
+}
+.toggle-panel-btn {
+    background-color: var(--bg-light-dark);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.6rem 3rem;
+    border: 1px solid transparent;
+    border-radius: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-duration-medium) ease-in-out;
+}
+.toggle-panel-btn:hover {
+    background-color: var(--accent-color-dark);
+    transition: all var(--transition-duration-medium) ease-in-out;
+}
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+#container.active .toggle-left {
+    transform: translateX(0);
+}
+
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+#container.active .toggle-right {
+    transform: translateX(200%);
 }
