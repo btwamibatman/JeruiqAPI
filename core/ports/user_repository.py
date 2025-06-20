@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
-from domain.models.user import User
+from core.entities.user import User
 
 class UserRepository(ABC):
-    @abstractmethod
-    def get_by_id(self, user_id: str) -> User:
-        pass
+    """Абстрактный интерфейс для работы с пользователями"""
 
     @abstractmethod
     def get_by_email(self, email: str) -> User:
