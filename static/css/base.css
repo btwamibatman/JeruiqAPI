@@ -1,10 +1,12 @@
 /* Color Variables */
 :root {
+    --bg-light: rgba(75, 75, 75, 1);
     --bg-dark: rgba(20, 20, 20, 1);
     --bg-medium-dark: rgba(40, 40, 40, 1);
     --bg-light-dark: rgba(60, 60, 60, 1);
-    --text-primary: white;
-    --text-secondary: #818181;
+    --text-primary: #ccc;
+    --text-secondary: #909090;
+    --text-tertiary: #B0B0B0;
     --accent-color: #00B8DB;
     --accent-color-light: cyan;
     --accent-color-dark: #007A8C;

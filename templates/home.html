@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home - Jeruyiq
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='/css/home.css') }}" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet-extra-markers@1.2.1/dist/css/leaflet.extra-markers.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="flex h-screen">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed z-10 bg-[var(--bg-dark)] w-16 h-full shadow-lg flex flex-col border-r border-[var(--bg-light-dark)]">
+        <div class="px-3 py-4 flex items-center justify-start w-16">
+            <button id="toggle-btn" class="flex items-center p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-lig focus:outline-none focus:ring-0 focus:shadow-noneht-dark)] hover:text-white rounded-lg">
+                <span class="material-symbols-outlined">dock_to_right</span>
+            </button>
+        </div>
+        <nav class="flex-1 px-3 py-4 overflow-y-auto">
+            <div class="tab space-y-2">
+                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-home">
+                    <span class="material-symbols-outlined mr-3">home</span>
+                    <div class="grid flex-1 text-left leading-tight">
+                        <span class="sidebar-text truncate">Home</span>
+                    </div>
+                </button>
+                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-explore">
+                    <span class="material-symbols-outlined mr-3">widgets</span>
+                    <div class="grid flex-1 text-left leading-tight">
+                        <span class="sidebar-text truncate">Explore</span>
+                    </div>
+                </button>
+                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-services">
+                    <span class="material-symbols-outlined mr-3">newsmode</span>
+                    <div class="grid flex-1 text-left leading-tight">
+                        <span class="sidebar-text truncate">Services</span>
+                    </div>
+                </button>
+                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-chats">
+                    <span class="material-symbols-outlined mr-3">chat</span>
+                    <div class="grid flex-1 text-left leading-tight">
+                        <span class="sidebar-text truncate">Chats</span>
+                    </div>
+                </button>
+                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-bookmarks">
+                    <span class="material-symbols-outlined mr-3">bookmark</span>
+                    <div class="grid flex-1 text-left leading-tight">
+                        <span class="sidebar-text truncate">Bookmarks</span>
+                    </div>
+                </button>
+            </div>
+        </nav>
+        <div class="px-1 py-1 border-t border-[var(--bg-light-dark)]">
+            <button id="open-profile-btn" class="flex items-center p-2 rounded-lg">
+                <span class="relative flex size-8 shrink-0 overflow-hidden h-10 w-10 rounded-lg mr-3">
+                    <img src="{{ url_for('static', filename='/images/chillguy.jpg') }}" alt="Profile" class="w-full h-full object-cover">
+                </span>
+                <div class="grid flex-1 text-left text-sm leading-tight">
+                    <span class="truncate font-semibold">Zhanserik</span>
+                    <span class="truncate text-xs">zhanserikamangazin@gmail.com</span>
+                </div>
+            </button>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div id="main-content" class="relative flex flex-col flex-1 ml-16 transition-all duration-300 ease-in-out">
+        <!-- Account Side Panel -->
+        <div id="account-side-panel" class="account-side-panel h-[9rem] w-[15rem] absolute flex-1 flex-col justify-left z-50 bottom-[0.25rem] left-[0.25rem] rounded-[1rem] bg-[var(--bg-dark)] border border-[var(--bg-light-dark)] transition-opacity duration-300 ease-in-out">
+            <div class="account-side-panel-btn rounded-t-[1rem]">
+                 <button id="profile-btn" class="px-2 rounded-lg rounded-t-[0.75rem]">
+                    <span class="material-symbols-outlined">person</span>
+                    <span class="ml-3">Profile</span>
+                </button>
+            </div>
+            <div class="account-side-panel-btn border-t border-b border-[var(--bg-light-dark)]">
+                <button id="settings-btn" class="px-2 rounded-lg">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="ml-3">Settings</span>
+                </button>
+            </div>
+            <div class="account-side-panel-btn rounded-b-[1rem]">
+                <button id="logout-btn" class="px-2 rounded-lg rounded-b-[0.75rem]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="ml-3">Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Home Tab with Globe -->
+
+        <div id="home" class="tabcontent flex-1 relative">
+            <!-- Map Container -->
+            <div id="mapContainer" class="w-full h-full overflow-hidden z-10 bg-[#333]"></div>
+
+            <!-- Top Container -->
+            <div class="home-top-container absolute top-8 left-1/2 -translate-x-1/2 z-50 flex items-center justify-start w-[42rem] gap-2 bg-transparent">
+                <div class="home-search-container bg-[var(--bg-dark)] flex items-center justify-start rounded-full relative flex-grow" style="width: calc(100% - 3rem); border: 1px solid var(--border-color-light);">
+                    <button id="home-search-button" class="flex items-center justify-center bg-transparent text-gray-400 hover:text-white rounded-full w-[3rem] h-[3rem] shrink-0 transition-colors duration-300">
+                        <span class="material-symbols-outlined truncate text-2xl leading-none">search</span>
+                    </button>
+                    <input type="text" id="home-search-input" placeholder="Search..." class="h-[3rem] rounded-r-full bg-transparent text-white placeholder-gray-400 pl-2 pr-5 focus:outline-none w-full">
+
+                    <div id="home-search-listbox" class="absolute left-0 right-0 p-2 top-full overflow-y-auto hidden"></div>
+                    <div id="search-error-message"></div>
+                </div>
+                <div class="home-ai-container bg-[var(--bg-dark)] flex items-center justify-end rounded-full" style="width: 3rem; border: 1px solid var(--accent-color-dark);">
+                    <input type="text" id="home-ai-input" placeholder="Talk to Jeruyiq..." class="h-[3rem] rounded-r-full bg-transparent text-white placeholder-gray-400 pl-5 pr-5 focus:outline-none">
+                    <button id="home-ai-button" class="flex items-center justify-center bg-transparent text-gray-400 hover:text-[var(--accent-color)] rounded-full w-[3rem] h-[3rem] shrink-0 transition-colors duration-300">
+                        <span class="material-symbols-outlined truncate text-2xl leading-none">wand_stars</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explore Tab -->
+
+        <div id="explore" class="tabcontent flex-1 p-6">
+            <h2 class="text-3xl font-bold text-white mb-6">Explore Kazakhstan</h2>
+
+            <div class="mb-8 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <input type="text" placeholder="Search destinations, activities, or themes..." 
+                    class="p-3 bg-[var(--bg-medium-dark)] rounded-lg border border-[var(--bg-light-dark)] 
+                 focus:border-[var(--ac focus:outline-none focus:ring-0 focus:shadow-nonecent-color)] w-full sm:flex-1"
+                    id="explore-search-input">
+                <button class="bg-[var(--accent-color)] text-white px-5 py-3 rounded-lg 
+                    hover:bg-opacity-90 transition-colors w-full sm:w-auto"
+                    id="explore-search-button">Search</button>
+            </div>
+
+            <section class="mb-10">
+                <h3 class="text-2xl font-semibold text-white mb-4">Explore by Category</h3>
+                <div class="explore-by-category flex flex-wrap gap-3" id="explore-categories">
+                    <button class="category-filter active-category" data-category="all">All</button>
+                    <button class="category-filter" data-category="nature">Nature & Outdoors</button>
+                    <button class="category-filter" data-category="culture">Culture & History</button>
+                    <button class="category-filter" data-category="cities">City Breaks</button>
+                    <button class="category-filter" data-category="adventure">Adventure Sports</button>
+                    <button class="category-filter" data-category="food">Food & Local Delights</button>
+                </div>
+            </section>
+
+            <section class="mb-10">
+                <h3 class="text-2xl font-semibold text-white mb-4">Discover Top Places</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="explore-grid">
+
+                    <div class="explore-card card-hover-effect" data-category="cities"
+                        data-lat="51.1294" data-lon="71.4491" data-name="Astana">
+                        <img src="/static/images/astana-expo.jpg" alt="Astana Expo">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-3 py-1 rounded-full">City</div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h4 class="text-xl font-bold text-white">Astana</h4>
+                            <p class="text-sm text-gray-300">Kazakhstan's futuristic capital, known for modern architecture and vibrant life.</p>
+                        </div>
+                        <button class="bookmark-btn">
+                            <span class="material-symbols-outlined bookmark-icon text-lg">bookmark</span>
+                        </button>
+                    </div>
+
+                    <div class="explore-card card-hover-effect" data-category="nature"
+                        data-lat="48.8357" data-lon="79.3700" data-name="Charyn Canyon">
+                        <img src="/static/images/charyn_canyon.jpg" alt="Charyn Canyon">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-3 py-1 rounded-full">Nature</div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h4 class="text-xl font-bold text-white">Charyn Canyon</h4>
+                            <p class="text-sm text-gray-300">A stunning natural monument, often compared to the Grand Canyon.</p>
+                        </div>
+                        <button class="bookmark-btn">
+                            <span class="material-symbols-outlined bookmark-icon text-lg">bookmark</span>
+                        </button>
+                    </div>
+
+                    <div class="explore-card card-hover-effect" data-category="nature"
+                        data-lat="49.1245" data-lon="78.4736" data-name="Kolsai Lakes">
+                        <img src="/static/images/kolsai_lakes.jpg" alt="Kolsai Lakes">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-3 py-1 rounded-full">Nature</div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h4 class="text-xl font-bold text-white">Kolsai Lakes</h4>
+                            <p class="text-sm text-gray-300">Three pristine mountain lakes nestled in the Northern Tien Shan mountains.</p>
+                        </div>
+                        <button class="bookmark-btn">
+                            <span class="material-symbols-outlined bookmark-icon text-lg">bookmark</span>
+                        </button>
+                    </div>
+
+                    <div class="explore-card card-hover-effect" data-category="culture"
+                        data-lat="43.2980" data-lon="68.2160" data-name="Turkistan">
+                        <img src="/static/images/turkistan.jpeg" alt="Turkistan">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-3 py-1 rounded-full">Culture</div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h4 class="text-xl font-bold text-white">Turkistan</h4>
+                            <p class="text-sm text-gray-300">An ancient city, spiritual center, and a key stop on the Silk Road.</p>
+                        </div>
+                        <button class="bookmark-btn">
+                            <span class="material-symbols-outlined bookmark-icon text-lg">bookmark</span>
+                        </button>
+                    </div>
+
+                    <div class="explore-card card-hover-effect" data-category="cities"
+                        data-lat="43.2389" data-lon="76.8897" data-name="Almaty">
+                        <img src="/static/images/almaty-koktobe.avif" alt="Almaty">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-3 py-1 rounded-full">City</div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h4 class="text-xl font-bold text-white">Almaty</h4>
+                            <p class="text-sm text-gray-300">Kazakhstan's former capital, nestled at the foot of the Trans-Ili Alatau mountains.</p>
+                        </div>
+                        <button class="bookmark-btn">
+                            <span class="material-symbols-outlined bookmark-icon text-lg">bookmark</span>
+                        </button>
+                    </div>
+
+                    <div class="explore-card card-hover-effect" data-category="nature"
+                        data-lat="43.0569" data-lon="76.9939" data-name="Big Almaty Lake">
+                        <img src="/static/images/big_almaty_lake.jpg" alt="Big Almaty Lake">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-3 py-1 rounded-full">Nature</div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h4 class="text-xl font-bold text-white">Big Almaty Lake</h4>
+                            <p class="text-sm text-gray-300">A stunning turquoise alpine lake, a popular day trip from Almaty.</p>
+                        </div>
+                        <button class="bookmark-btn">
+                            <span class="material-symbols-outlined bookmark-icon text-lg">bookmark</span>
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-2xl font-semibold text-white mb-4">Popular Travel Guides</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5">
+                        <h4 class="text-xl font-semibold text-white mb-2">Hiking in the Tien Shan Mountains</h4>
+                        <p class="text-gray-300 text-sm mb-3">Explore the majestic peaks and valleys surrounding Almaty.</p>
+                        <a href="#" class="text-[var(--accent-color)] hover:underline">Read Guide <span class="material-symbols-outlined text-sm align-middle">arrow_right_alt</span></a>
+                    </div>
+                    <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5">
+                        <h4 class="text-xl font-semibold text-white mb-2">Discovering Astana's Architectural Wonders</h4>
+                        <p class="text-gray-300 text-sm mb-3">A journey through the unique and modern buildings of the capital.</p>
+                        <a href="#" class="text-[var(--accent-color)] hover:underline">Read Guide <span class="material-symbols-outlined text-sm align-middle">arrow_right_alt</span></a>
+                    </div>
+                    <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5">
+                        <h4 class="text-xl font-semibold text-white mb-2">The Ancient Silk Road: Turkestan & Beyond</h4>
+                        <p class="text-gray-300 text-sm mb-3">Retrace the steps of ancient traders and explore historical sites.</p>
+                        <a href="#" class="text-[var(--accent-color)] hover:underline">Read Guide <span class="material-symbols-outlined text-sm align-middle">arrow_right_alt</span></a>
+                    </div>
+                    <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5">
+                        <h4 class="text-xl font-semibold text-white mb-2">Kazakh Cuisine: A Culinary Journey</h4>
+                        <p class="text-gray-300 text-sm mb-3">Savor the rich flavors and unique dishes of Kazakhstan.</p>
+                        <a href="#" class="text-[var(--accent-color)] hover:underline">Read Guide <span class="material-symbols-outlined text-sm align-middle">arrow_right_alt</span></a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Services Tab -->
+
+        <div id="services" class="tabcontent flex-1 p-6">
+            <h2 class="text-3xl font-bold text-white mb-6">Our Services</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 text-center">
+                    <span class="material-symbols-outlined text-[var(--accent-color)] text-5xl mb-3">hotel</span>
+                    <h3 class="text-xl font-semibold text-white mb-2">Accommodation</h3>
+                    <p class="text-gray-300 text-sm">Find hotels, guesthouses, and unique stays.</p>
+                    <button class="mt-4 bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Browse Stays</button>
+                </div>
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 text-center">
+                    <span class="material-symbols-outlined text-[var(--accent-color)] text-5xl mb-3">hiking</span>
+                    <h3 class="text-xl font-semibold text-white mb-2">Tours & Activities</h3>
+                    <p class="text-gray-300 text-sm">Book guided tours, adventures, and cultural experiences.</p>
+                    <button class="mt-4 bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Find Activities</button>
+                </div>
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 text-center">
+                    <span class="material-symbols-outlined text-[var(--accent-color)] text-5xl mb-3">directions_car</span>
+                    <h3 class="text-xl font-semibold text-white mb-2">Transportation</h3>
+                    <p class="text-gray-300 text-sm">Rent cars, find train tickets, and more.</p>
+                    <button class="mt-4 bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Book Transport</button>
+                </div>
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 text-center">
+                    <span class="material-symbols-outlined text-[var(--accent-color)] text-5xl mb-3">person_search</span>
+                    <h3 class="text-xl font-semibold text-white mb-2">Local Guides</h3>
+                    <p class="text-gray-300 text-sm">Connect with experienced local guides.</p>
+                    <button class="mt-4 bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Find a Guide</button>
+                </div>
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 text-center">
+                    <span class="material-symbols-outlined text-[var(--accent-color)] text-5xl mb-3">travel_explore</span>
+                    <h3 class="text-xl font-semibold text-white mb-2">Travel Insurance</h3>
+                    <p class="text-gray-300 text-sm">Get insured for a worry-free trip.</p>
+                    <button class="mt-4 bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Get a Quote</button>
+                </div>
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 text-center">
+                    <span class="material-symbols-outlined text-[var(--accent-color)] text-5xl mb-3">article</span>
+                    <h3 class="text-xl font-semibold text-white mb-2">Visa Information</h3>
+                    <p class="text-gray-300 text-sm">Essential visa requirements for visitors.</p>
+                    <button class="mt-4 bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Learn More</button>
+                </div>
+            </div>
+
+            <section>
+                <h3 class="text-2xl font-semibold text-white mb-4">Featured Providers</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 flex items-center space-x-4">
+                        <img src="" alt="Hotel Chain" class="w-20 h-20 rounded-lg object-contain">
+                        <div>
+                            <h4 class="text-xl font-semibold text-white">Luxury Hotels KZ</h4>
+                            <p class="text-gray-300 text-sm">Premium accommodations across Kazakhstan.</p>
+                            <a href="#" class="text-[var(--accent-color)] hover:underline text-sm">View Listings</a>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5 flex items-center space-x-4">
+                        <img src="" alt="Tour Company" class="w-20 h-20 rounded-lg object-contain">
+                        <div>
+                            <h4 class="text-xl font-semibold text-white">Kazakh Adventures Tours</h4>
+                            <p class="text-gray-300 text-sm">Exciting adventure tours for every traveler.</p>
+                            <a href="#" class="text-[var(--accent-color)] hover:underline text-sm">Explore Tours</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Chats Tab -->
+
+        <div id="chats" class="tabcontent flex-1 p-6 flex flex-col h-full">
+            <h2 class="text-3xl font-bold text-white mb-6">Chats & Support</h2>
+
+            <section class="flex-1 bg-[var(--bg-medium-dark)] rounded-lg shadow-lg flex flex-col overflow-hidden mb-6">
+                <div class="p-4 border-b border-[var(--bg-light-dark)]">
+                    <h3 class="text-xl font-semibold text-white">AI Travel Assistant</h3>
+                    <p class="text-gray-400 text-sm">Your personal guide to Kazakhstan.</p>
+                </div>
+                <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
+                    <div class="flex justify-start">
+                        <div class="bg-[var(--accent-color)] text-white p-3 rounded-lg max-w-xs">
+                            Hello! How can I help you plan your trip to Kazakhstan?
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <div class="bg-[var(--bg-light-dark)] text-white p-3 rounded-lg max-w-xs">
+                            Hi! What are the best places to visit in Astana?
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-[var(--bg-light-dark)] flex">
+                    <input type="text" id="chat-input" placeholder="Ask a question..." class="flex-1 p-3 rounded-l-lg bg-[var(--bg-dark)] text-white border border-[var(--bg-light-dark)] focus:border-[var(--ac focus:outline-none focus:ring-0 focus:shadow-nonecent-color)]">
+                    <button id="send-chat-btn" class="bg-[var(--accent-color)] text-white px-5 py-3 rounded-r-lg hover:bg-opacity-90 transition-colors">Send</button>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5">
+                    <h3 class="text-xl font-semibold text-white mb-2">Community Forums</h3>
+                    <p class="text-gray-300 text-sm mb-3">Connect with other travelers and share experiences.</p>
+                    <button class="bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">Join Forums</button>
+                </div>
+                <div class="bg-[var(--bg-medium-dark)] rounded-lg shadow-lg p-5">
+                    <h3 class="text-xl font-semibold text-white mb-2">Frequently Asked Questions</h3>
+                    <p class="text-gray-300 text-sm mb-3">Find quick answers to common travel queries.</p>
+                    <button class="bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">View FAQs</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Bookmarks Tab -->
+
+        <div id="bookmarks" class="tabcontent flex-1 p-6">
+            <h2 class="text-3xl font-bold text-white mb-6">Your Bookmarks</h2>
+            
+            <div id="bookmarks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+
+            <p id="no-bookmarks-message" class="text-gray-400 text-lg hidden">
+                You haven't bookmarked any places yet! Start exploring and save your favorites.
+            </p>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-extra-markers@1.2.1/dist/js/leaflet.extra-markers.min.js"></script>
+<script type="module" src="{{ url_for('static', filename='/js/home/home.js') }}"></script>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}
