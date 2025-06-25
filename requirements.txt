@@ -1,10 +1,16 @@
 Flask
+Flask-SQLAlchemy
 SQLAlchemy
 bcrypt
 PyJWT
 pydantic
-alembic
+Alembic
 python-dotenv
 psycopg2-binary
 pytest
 tailwindcss
+marshmallow
+requests
+google.generativeai
+redis
+pyodbc

@@ -11,10 +11,14 @@ class Config:
     DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
     # База данных
-    DATABASE_URL = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL", 'sqlite:///./jeruyiq.db')
 
     # Аутентификация
     SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecretkey")
+    JWT_EXPIRATION_MINUTES = os.getenv("JWT_EXPIRATION_MINUTES", 1)
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 
     # Настройки логирования
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
@@ -28,7 +32,7 @@ class Config:
     @staticmethod
     def validate():
         """Проверка, что все важные переменные установлены"""
-        if not Config.DATABASE_URL:
+        if not Config.SQLALCHEMY_DATABASE_URL:
             raise ValueError("DATABASE_URL не найден в .env")
         if not Config.SECRET_KEY:
             raise ValueError("SECRET_KEY не найден в .env")
