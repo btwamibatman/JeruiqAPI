@@ -16,7 +16,7 @@ class Config:
     # Аутентификация
     SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecretkey")
-    JWT_EXPIRATION_MINUTES = os.getenv("JWT_EXPIRATION_MINUTES", 1)
+    JWT_EXPIRATION_MINUTES = os.getenv("JWT_EXPIRATION_MINUTES", 60)
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 

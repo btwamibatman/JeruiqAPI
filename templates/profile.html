@@ -1,15 +1,211 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}
+Profile - Jeruyiq
+{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 {% endblock %}
 
-{% block body %}
-
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% block body %}
+<div class="profile-page-container flex gap-8 max-w-[80%] justify-center mx-auto px-4 py-8">
+    <!-- Left Side Navigation Tabs -->
+    <div class="profile-left flex flex-col gap-16 w-64 min-w-[10rem] items-center">
+            <!-- Go Back Button -->
+        <div class="go-back-btn w-full">
+            <a href="/home" class="flex items-center gap-2 px-6 py-3 pl-0 rounded-2xl bg-transparent text-[var(--text-secondary)] hover:text-[var(--accent-color)] transition-colors duration-300">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span>Back to Home</span>
+            </a>
+        </div>
+        <nav class="profile-tabs flex flex-col gap-4 w-60 min-w-[10rem]">
+            <a href="#account" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">account_circle</span>
+                <span class="font-semibold ml-2">Account</span>
+            </a>
+            <a href="#edit-profile" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">edit</span>
+                <span class="font-semibold ml-2">Edit Profile</span>
+            </a>
+            <a href="#security" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">security</span>
+                <span class="font-semibold ml-2">Security</span>
+            </a>
+            <a href="#notifications" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="font-semibold ml-2">Notifications</span>
+            </a>
+            <a href="#settings" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-semibold ml-2">Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Profile Content -->
+    <div class="profile-main flex-1 flex flex-col">
+        <!-- Main Content Sections -->
+        <main class="profile-main-content relative">
+            <!-- Account Section -->
+            <section id="account" class="profile-section flex flex-col gap-8">
+                <!-- Profile Header -->
+                <div class="profile-header neo-container relative flex flex-col rounded-3xl p-0">
+                    <!-- Gradient Cover (top banner, always at the top of the card) -->
+                    <div class="cover-image-gradient flex w-full h-[10rem] rounded-t-3xl z-10"></div>
+
+                    <!-- Avatar -->
+                    <div class="flex justify-center items-center flex-shrink-0 w-full z-20">
+                        <img class="profile-picture w-32 h-32 rounded-full object-cover border-4 border-[var(--bg-dark)] absolute top-24 left-6 bg-[var(--bg-medium-dark)]" id="profile-picture-preview">
+                        <!-- Edit icon on avatar -->
+                        <button class="absolute top-2 right-2 bg-white rounded-full w-[2.5rem] h-[2.5rem]">
+                            <span class="material-symbols-outlined text-black text-xl hover:text-[var(--accent-color)] transition-color duration-300">edit</span>
+                        </button>
+                    </div>
+
+                    <!-- User Info & Actions -->
+                    <div class="flex flex-col relative w-full min-h-[20rem] z-10">
+                        <div class="user-info-top flex w-full gap-4">
+                            <div class="user-info-left flex flex-1 flex-col w-full gap-4 px-6 pt-20 pb-6">
+                                <div class="flex flex-col gap-1 top-16">
+                                    <h1 class="profile-username text-3xl font-bold text-white" id="profile-username"></h1>
+                                    <p class="profile-location text-lg text-[var(--text-secondary)]" id="profile-location">Astana, Kazakhstan</p>
+                                </div>
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex gap-2">
+                                        <a href="#edit-profile" class="profile-action-btn glass-container profile-tab-link-button">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                            <span>Edit Profile</span>
+                                        </a>
+                                        <a href="#settings" class="profile-action-btn glass-container profile-tab-link-button">
+                                            <span class="material-symbols-outlined text-lg">settings</span>
+                                            <span>Settings</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="user-info-right flex flex-1 flex-col items-end w-full gap-4 p-6 pt-12">
+                                <div class="stat-cards grid grid-cols-3 gap-4 justify-end">
+                                    <div class="stat-card glass-container p-4 rounded-2xl text-center">
+                                        <h3 class="text-sm text-[var(--text-primary)] mb-1">Trips</h3>
+                                        <p class="text-2xl font-bold text-[var(--accent-color)]">24</p>
+                                    </div>
+                                    <div class="stat-card glass-container p-4 rounded-2xl text-center">
+                                        <h3 class="text-sm text-[var(--text-primary)] mb-1">Points</h3>
+                                        <p class="text-2xl font-bold text-[var(--accent-color)]">1350</p>
+                                    </div>
+                                    <div class="stat-card glass-container p-4 rounded-2xl text-center">
+                                        <h3 class="text-sm text-[var(--text-primary)] mb-1">Ranking</h3>
+                                        <p class="text-2xl font-bold text-[var(--accent-color)]">#1</p>
+                                    </div>
+                                </div>
+                                <div class="interests flex flex-col gap-2">
+                                    <div class="justify-end flex items-center gap-2">
+                                        <span class="text-lg font-semibold text-[var(--text-secondary)]">Interests</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 justify-end">
+                                        <span class="tag glass-container text-[var(--text-secondary)] px-3 py-1 rounded-full hover:border-[var(--accent-color)] transition-colors duration-300 cursor-pointer">Traveler</span>
+                                        <span class="tag glass-container text-[var(--text-secondary)] px-3 py-1 rounded-full hover:border-[var(--accent-color)] transition-colors duration-300 cursor-pointer">Photographer</span>
+                                        <span class="tag glass-container text-[var(--text-secondary)] px-3 py-1 rounded-full hover:border-[var(--accent-color)] transition-colors duration-300 cursor-pointer">Nature Lover</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-info-bottom w-full p-6 pt-0 bg-transparent">
+                            <div class="profile-bio">
+                                <h2 class="text-2xl font-bold text-white mb-2">Bio</h2>
+                                <p class="text-lg font-xs" id="profile-bio"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Profile Completion Progress Bar -->
+                <div class="profile-completion-bar neo-container w-full mt-4 p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-lg text-[var(--text-secondary)]">Profile Completion</span>
+                        <span id="profile-completion-label" class="text-sm text-[var(--accent-color)] font-semibold">0%</span>
+                    </div>
+                    <div class="w-full bg-[var(--bg-light-dark)] rounded-full h-3">
+                        <div id="profile-completion-bar" class="bg-[var(--accent-color)] h-3 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </section>
+            <!-- Edit Profile Section -->
+            <section id="edit-profile" class="profile-section" style="display: none;">
+                <form class="edit-profile-form neo-container w-auto p-8 rounded-2xl">
+                    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-[var(--text-secondary)] mb-2">Name</label>
+                            <input type="text" id="name" value="Zhanserik" class="form-input">
+                        </div>
+                        <div>
+                            <label for="surname" class="block text-[var(--text-secondary)] mb-2">Surname</label>
+                            <input type="text" id="surname" value="Amangazin" class="form-input">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="email" class="block text-[var(--text-secondary)] mb-2">Email Address</label>
+                        <input type="email" id="email" value="zhanserikamangazin@gmail.com" class="form-input">
+                    </div>
+                    <div class="mb-6">
+                        <label for="profile-picture" class="block text-[var(--text-secondary)] mb-2">Profile Picture</label>
+                        <input type="file" id="profile-picture" name="profile_picture" accept="image/*" class="form-input">
+                    </div>
+                    <div class="mb-6">
+                        <label for="bio-edit" class="block text-[var(--text-secondary)] mb-2">Bio</label>
+                        <textarea id="bio-edit" rows="4" class="form-input"></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label for="instagram" class="block text-[var(--text-secondary)] mb-2">Instagram</label>
+                        <input type="url" id="instagram" class="form-input" placeholder="https://instagram.com/yourprofile">
+                    </div>
+                    <div class="mb-6">
+                        <label for="telegram" class="block text-[var(--text-secondary)] mb-2">Telegram</label>
+                        <input type="url" id="telegram" class="form-input" placeholder="https://t.me/yourprofile">
+                    </div>
+                    <div class="mb-6">
+                        <label for="x" class="block text-[var(--text-secondary)] mb-2">X</label>
+                        <input type="url" id="x" class="form-input" placeholder="https://x.com/yourprofile">
+                    </div>
+                    <button type="submit" class="save-changes-btn w-full bg-[var(--accent-color)] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[var(--accent-color-dark)] transition">Save Changes</button>
+                </form>
+            </section>
+            <!-- Other Sections will be dynamically loaded here -->
+            <section id="security" class="profile-section" style="display: none;">
+                <div class="text-center p-8 neo-container rounded-2xl">
+                    <h2 class="text-2xl font-bold">Security Settings</h2>
+                    <p class="text-[var(--text-secondary)] mt-2">Security details will be displayed here.</p>
+                </div>
+            </section>
+            <section id="notifications" class="profile-section" style="display: none;">
+                <div class="text-center p-8 neo-container rounded-2xl">
+                    <h2 class="text-2xl font-bold">Notification Preferences</h2>
+                    <p class="text-[var(--text-secondary)] mt-2">Notification settings will be displayed here.</p>
+                </div>
+            </section>
+            <section id="settings" class="profile-section" style="display: none;">
+                <div class="text-center p-8 neo-container rounded-2xl">
+                    <h2 class="text-2xl font-bold">Settings</h2>
+                    <p class="text-[var(--text-secondary)] mt-2">Settings options will be displayed here.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Right Side Container -->
+    <aside class="profile-right flex flex-col gap-6 w-64">
+        <!-- Quick Social links -->
+        <div class="social-links neo-container rounded-2xl p-6">
+            <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2" id="social-links-list">
+                
+            </ul>
+        </div>
+        <!-- Add more widgets here if needed -->
+    </aside>
+</div>
 {% endblock %}

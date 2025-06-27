@@ -12,10 +12,16 @@ Home - Jeruyiq
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 {% endblock %}
 
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-extra-markers@1.2.1/dist/js/leaflet.extra-markers.min.js"></script>
+<script type="module" src="{{ url_for('static', filename='/js/home/home.js') }}"></script>
+{% endblock %}
+
 {% block body %}
-<div class="flex h-screen">
+<div class="flex flex-row h-screen">
     <!-- Sidebar -->
-    <div id="sidebar" class="fixed z-10 bg-[var(--bg-dark)] w-16 h-full shadow-lg flex flex-col border-r border-[var(--bg-light-dark)]">
+    <aside id="sidebar" class="fixed z-10 bg-[var(--bg-dark)] w-16 h-full flex flex-col border-r border-[var(--bg-light-dark)]">
         <div class="px-3 py-4 flex items-center justify-start w-16">
             <button id="toggle-btn" class="flex items-center p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-lig focus:outline-none focus:ring-0 focus:shadow-noneht-dark)] hover:text-white rounded-lg">
                 <span class="material-symbols-outlined">dock_to_right</span>
@@ -23,31 +29,31 @@ Home - Jeruyiq
         </div>
         <nav class="flex-1 px-3 py-4 overflow-y-auto">
             <div class="tab space-y-2">
-                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-home">
+                <button href="#" class="tab-btn relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-home" data-tab="home">
                     <span class="material-symbols-outlined mr-3">home</span>
                     <div class="grid flex-1 text-left leading-tight">
                         <span class="sidebar-text truncate">Home</span>
                     </div>
                 </button>
-                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-explore">
-                    <span class="material-symbols-outlined mr-3">widgets</span>
+                <button href="#" class="tab-btn relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-explore" data-tab="explore">
+                    <span class="material-symbols-outlined mr-3">explore</span>
                     <div class="grid flex-1 text-left leading-tight">
                         <span class="sidebar-text truncate">Explore</span>
                     </div>
                 </button>
-                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-services">
+                <button href="#" class="tab-btn relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-services" data-tab="services">
                     <span class="material-symbols-outlined mr-3">newsmode</span>
                     <div class="grid flex-1 text-left leading-tight">
                         <span class="sidebar-text truncate">Services</span>
                     </div>
                 </button>
-                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-chats">
+                <button href="#" class="tab-btn relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-chats" data-tab="chats">
                     <span class="material-symbols-outlined mr-3">chat</span>
                     <div class="grid flex-1 text-left leading-tight">
                         <span class="sidebar-text truncate">Chats</span>
                     </div>
                 </button>
-                <button href="#" class="tablinks relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-bookmarks">
+                <button href="#" class="tab-btn relative flex shrink-0 overflow-hidden items-center p-2 rounded-lg" id="tab-bookmarks" data-tab="bookmarks">
                     <span class="material-symbols-outlined mr-3">bookmark</span>
                     <div class="grid flex-1 text-left leading-tight">
                         <span class="sidebar-text truncate">Bookmarks</span>
@@ -58,17 +64,17 @@ Home - Jeruyiq
         <div class="px-1 py-1 border-t border-[var(--bg-light-dark)]">
             <button id="open-profile-btn" class="flex items-center p-2 rounded-lg">
                 <span class="relative flex size-8 shrink-0 overflow-hidden h-10 w-10 rounded-lg mr-3">
-                    <img src="{{ url_for('static', filename='/images/chillguy.jpg') }}" alt="Profile" class="w-full h-full object-cover">
+                    <img class="w-full h-full object-cover" id="profile-picture">
                 </span>
                 <div class="grid flex-1 text-left text-sm leading-tight">
-                    <span class="truncate font-semibold">Zhanserik</span>
-                    <span class="truncate text-xs">zhanserikamangazin@gmail.com</span>
+                    <h4 id="profile-name" class="truncate text- semibold text-white">Loading...</h4>
+                    <p id="profile-email" class="truncate text-sm text-gray-400">Loading...</p>
                 </div>
             </button>
         </div>
-    </div>
+    </aside>
     <!-- Main Content -->
-    <div id="main-content" class="relative flex flex-col flex-1 ml-16 transition-all duration-300 ease-in-out">
+    <main id="main-content" class="relative flex-1 ml-16 transition-all duration-300 ease-in-out">
         <!-- Account Side Panel -->
         <div id="account-side-panel" class="account-side-panel h-[9rem] w-[15rem] absolute flex-1 flex-col justify-left z-50 bottom-[0.25rem] left-[0.25rem] rounded-[1rem] bg-[var(--bg-dark)] border border-[var(--bg-light-dark)] transition-opacity duration-300 ease-in-out">
             <div class="account-side-panel-btn rounded-t-[1rem]">
@@ -92,8 +98,7 @@ Home - Jeruyiq
         </div>
 
         <!-- Main Home Tab with Globe -->
-
-        <div id="home" class="tabcontent flex-1 relative">
+        <section id="home" class="tab-content flex flex-1 relative">
             <!-- Map Container -->
             <div id="mapContainer" class="w-full h-full overflow-hidden z-10 bg-[#333]"></div>
 
@@ -115,11 +120,10 @@ Home - Jeruyiq
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Explore Tab -->
-
-        <div id="explore" class="tabcontent flex-1 p-6">
+        <section id="explore" class="tab-content flex flex-1 p-6" style="display: none;">
             <h2 class="text-3xl font-bold text-white mb-6">Explore Kazakhstan</h2>
 
             <div class="mb-8 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -260,11 +264,10 @@ Home - Jeruyiq
                     </div>
                 </div>
             </section>
-        </div>
+        </section>
 
         <!-- Services Tab -->
-
-        <div id="services" class="tabcontent flex-1 p-6">
+        <section id="services" class="tab-content flex flex-1 p-6" style="display: none;">
             <h2 class="text-3xl font-bold text-white mb-6">Our Services</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
@@ -327,11 +330,10 @@ Home - Jeruyiq
                     </div>
                 </div>
             </section>
-        </div>
+        </section>
 
         <!-- Chats Tab -->
-
-        <div id="chats" class="tabcontent flex-1 p-6 flex flex-col h-full">
+        <section id="chats" class="tab-content flex flex-1 p-6" style="display: none;">
             <h2 class="text-3xl font-bold text-white mb-6">Chats & Support</h2>
 
             <section class="flex-1 bg-[var(--bg-medium-dark)] rounded-lg shadow-lg flex flex-col overflow-hidden mb-6">
@@ -369,11 +371,10 @@ Home - Jeruyiq
                     <button class="bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">View FAQs</button>
                 </div>
             </section>
-        </div>
+        </section>
 
         <!-- Bookmarks Tab -->
-
-        <div id="bookmarks" class="tabcontent flex-1 p-6">
+        <section id="bookmarks" class="tab-content flex flex-1 p-6" style="display: none;">
             <h2 class="text-3xl font-bold text-white mb-6">Your Bookmarks</h2>
             
             <div id="bookmarks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -382,14 +383,7 @@ Home - Jeruyiq
             <p id="no-bookmarks-message" class="text-gray-400 text-lg hidden">
                 You haven't bookmarked any places yet! Start exploring and save your favorites.
             </p>
-        </div>
-    </div>
+        </section>
+    </main>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-extra-markers@1.2.1/dist/js/leaflet.extra-markers.min.js"></script>
-<script type="module" src="{{ url_for('static', filename='/js/home/home.js') }}"></script>
-{% endblock %}
-
-{% block extra_js %}
-
 {% endblock %}

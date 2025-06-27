@@ -1,22 +1,24 @@
-// Existing toggle logic
-const container = document.getElementById('container');
-const loginBtn = document.getElementById('login');
-const registerBtn = document.getElementById('register');
-
-if (registerBtn && container) {
-    registerBtn.addEventListener('click', () => {
-        container.classList.add('active');
-    });
-}
-
-if (loginBtn && container) {
-    loginBtn.addEventListener('click', () => {
-        container.classList.remove('active');
-    });
-}
-
 // --- New Form Submission Logic ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Existing toggle logic
+    const container = document.getElementById('container');
+    const loginBtn = document.getElementById('login');
+    const registerBtn = document.getElementById('register');
+
+    if (registerBtn && container) {
+        registerBtn.addEventListener('click', () => {
+            console.log("Register button clicked")
+            container.classList.add('active');
+        });
+    }
+
+    if (loginBtn && container) {
+        loginBtn.addEventListener('click', () => {
+            console.log("Login button clicked")
+            container.classList.remove('active');
+        });
+    }
+
     const loginForm = document.getElementById('login-form'); // The actual login form
     const registerForm = document.getElementById('register-form'); // The actual registration form
     const loginErrorMessage = document.getElementById('login-error-message');

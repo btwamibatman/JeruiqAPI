@@ -4,7 +4,6 @@
     outline: none;
     box-sizing: border-box;
 }
-
 body {
     background-color: var(--bg-dark);
     font-family: var(--font-family-primary);
@@ -65,10 +64,13 @@ body {
     background-color: var(--bg-medium-dark);
 }
 
-.tabcontent {
-    display: flex;
+.tab-content {
+    display: none;
     flex-direction: column;
     height: 100%;
+}
+.tab-content.active{
+    display: flex;
 }
 
 /* Main Tab with Cesium Container Styles */

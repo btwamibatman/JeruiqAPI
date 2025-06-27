@@ -8,6 +8,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
     <!-- Google Fonts: Inter, Geist -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,12 +26,11 @@
 
     <!-- Custom CSS/JS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/base.css') }}">
-    <script src="{{ url_for('static', filename='/js/app.js') }}"></script>
 
     {% block extra_css %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </head>
 <body>
     {% block body %}{% endblock %}
 </body>
-{% block extra_js %}{% endblock %}
 </html>

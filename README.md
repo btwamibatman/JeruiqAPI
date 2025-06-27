@@ -1,6 +1,6 @@
-# Jeruyiq API
+# Jeruyiq
 
-Jeruyiq API is a backend application built with Flask, designed to provide services related to exploring places and interacting with AI, specifically focused on Kazakhstan. It includes features for user authentication, searching for locations using the Photon API, interacting with the Gemini AI model, and managing user data.
+Jeruyiq is a backend application built with Flask, designed to provide services related to exploring places and interacting with AI, specifically focused on Kazakhstan. It includes features for user authentication, searching for locations using the Photon API, interacting with the Gemini AI model, and managing user data.
 
 ## Features
 

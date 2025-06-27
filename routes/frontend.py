@@ -2,6 +2,10 @@ from flask import Blueprint, render_template
 
 frontend_bp = Blueprint("frontend", __name__, template_folder="templates")
 
+@frontend_bp.route('/favicon.ico')
+def favicon():
+    return '', 204  # No Content
+
 @frontend_bp.route("/")
 @frontend_bp.route("/get-started")
 def start_page():

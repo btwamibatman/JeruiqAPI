@@ -6,13 +6,15 @@
     --bg-light-dark: rgba(60, 60, 60, 1);
     --text-primary: #ccc;
     --text-secondary: #909090;
-    --text-tertiary: #B0B0B0;
     --accent-color: #00B8DB;
-    --accent-color-light: cyan;
+    --accent-color-light: #00e5ff;
     --accent-color-dark: #007A8C;
     --border-color-light: rgba(80, 80, 80, 1);
     --bg-hover: rgba(60, 60, 60, 1);
     --bg-dark-navy: #111827;
+    
+    --neo-shadow-light: rgba(60, 60, 60, 0.4);
+    --neo-shadow-dark: rgba(0, 0, 0, 0.7);
 }
 /* Font Variables */
 :root {
@@ -42,4 +44,20 @@
 /* Hide scrollbar */
 ::-webkit-scrollbar {
     display: none;
+}
+
+.neo-container {
+    background: var(--bg-dark); /* Same as the body background */
+    border-radius: 24px;
+    box-shadow: 4px 4px 8px var(--neo-shadow-dark), -4px -4px 8px var(--neo-shadow-light);
+    border: none;
+}
+.glass-container {
+    /* Frosted glass effect */
+    background: rgba(40, 40, 40, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(80, 80, 80, 0.5);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.37);
 }

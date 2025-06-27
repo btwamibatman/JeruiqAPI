@@ -2,6 +2,18 @@ class DomainException(Exception):
     """Base exception for domain errors."""
     pass
 
+class RepositoryException(Exception):
+    """"""
+    pass
+
+class NotFoundException(Exception):
+    """"""
+    pass
+
+class ConflictException(Exception):
+    """"""
+    pass
+
 class EmailAlreadyExistsException(DomainException):
     """Custom exception for registration when email is taken."""
     pass

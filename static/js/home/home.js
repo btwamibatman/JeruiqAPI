@@ -5,7 +5,7 @@ import { setupExploreFilteringAndSearch, updateAllExploreCardBookmarkStates } fr
 import { clearMarkers } from './map.js'; // To clear search marker when switching tabs
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Function to check login status and redirect if not logged in
+    // --- Function to check login status and redirect if not logged in
     function checkLoginStatusAndRedirect() {
         const token = localStorage.getItem('jwt_token'); // Check for the JWT token
 
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // If no token is found, the user is not logged in
             console.log('No JWT token found. Redirecting to login page.');
             // Redirect to the login/registration page (assuming it's at the root '/')
-            window.location.href = '/';
+            window.location.href = '/login';
         } else {
             console.log('JWT token found. User is logged in.');
             // User is logged in, allow them to stay on the page.
@@ -21,8 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             // or initializing authenticated parts of the page.
         }
     }
-
-    // Run the check when the DOM is fully loaded
     checkLoginStatusAndRedirect();
 
     // --- Global DOM Elements ---
@@ -32,16 +30,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sidebarTexts = document.querySelectorAll('.sidebar-text');
     const mapContainer = document.getElementById('mapContainer');
 
+    const openProfileBtn = document.getElementById('open-profile-btn');
+    const profilePicture = document.getElementById('profile-picture');
+    const accountSidePanel = document.getElementById('account-side-panel');
+    const profileBtn = document.getElementById('profile-btn')
+    const settingsBtn = document.getElementById('settings-btn')
+    const logoutBtn = document.getElementById('logout-btn')
+
+    const profileNameElement = document.getElementById('profile-name');
+    const profileEmailElement = document.getElementById('profile-email');
+
     const homeSearchInput = document.getElementById('home-search-input');
     const homeSearchButton = document.getElementById('home-search-button');
     const homeSearchContainer = document.querySelector('.home-search-container')
     const homeAiContainer = document.querySelector('.home-ai-container');
     const homeAiInput = document.getElementById('home-ai-input');
     const homeAiButton = document.getElementById('home-ai-button');
-
-    const openProfileBtn = document.getElementById('open-profile-btn');
-    const accountSidePanel = document.getElementById('account-side-panel');
-    const logoutBtn = document.getElementById('logout-btn')
 
     const exploreGrid = document.getElementById('explore-grid');
     const exploreSearchInput = document.getElementById('explore-search-input');
@@ -53,6 +57,178 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!sidebar || !toggleBtn || !mapContainer || !homeSearchInput || !homeSearchButton || !homeAiContainer || !homeAiInput || !homeAiButton) {
         console.error('Error: One or more core UI elements not found. Ensure all required IDs/classes exist in HTML.');
         return;
+    }
+
+    // --- Sidebar Toggle Script ---
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('w-16');
+        sidebar.classList.toggle('w-64');
+        sidebarTexts.forEach(text => {
+            text.classList.toggle('hidden');
+            if (!sidebar.classList.contains('w-64')) {
+                text.classList.add('hidden');
+            } else {
+                setTimeout(() => {
+                    if (sidebar.classList.contains('w-64')) {
+                        text.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+        mainContent.classList.toggle('ml-16');
+        mainContent.classList.toggle('ml-64');
+
+        if (window.map) {
+             mainContent.addEventListener('transitionend', function handler(event) {
+                if (event.propertyName === 'margin-left') {
+                    window.map.invalidateSize();
+                    mainContent.removeEventListener('transitionend', handler);
+                }
+            });
+        }
+    });
+
+    // --- Unified Tab Switching Logic ---
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Remove active from all buttons and hide all contents
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(tc => tc.style.display = 'none');
+
+            // Activate clicked button and show corresponding content
+            this.classList.add('active');
+
+            // Show the corresponding section
+            const tabId = this.getAttribute('data-tab');
+            const tabContent = document.getElementById(tabId);
+            if (tabContent) {
+                tabContent.classList.add('active');
+                tabContent.style.display = 'block';
+            }
+
+            // Optional: Call extra logic for certain tabs
+            if (tabId === 'bookmarks') {
+                loadBookmarks(window.map);
+            } else if (tabId === 'explore') {
+                updateAllExploreCardBookmarkStates(window.map);
+            } else if (tabId === 'home') {
+                setTimeout(() => {
+                    if (window.map) window.map.invalidateSize();
+                    clearMarkers(window.map);
+                }, 50);
+            }
+        });
+    });
+
+    // Activate the first tab by default
+    if (tabButtons.length > 0) tabButtons[0].click();
+
+    // --- Function to fetch and display user profile data ---
+    async function fetchAndDisplayUserProfile() {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+            console.error('No JWT token found for profile fetch.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                console.error('Profile fetch failed: Unauthorized. Token might be expired or invalid.');
+                localStorage.removeItem('jwt_token'); // Remove invalid token
+                window.location.href = '/login'; // Redirect to login
+                return;
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || response.statusText}`);
+            }
+
+            const userData = await response.json();
+            console.log('User profile data fetched:', userData);
+
+            // Update the profile info elements within the openProfileBtn
+            // We already got references to these elements at the top
+            if (profileNameElement) {
+                profileNameElement.textContent = `${userData.name} ${userData.surname}`;
+            }
+            if (profileEmailElement) {
+                profileEmailElement.textContent = userData.email;
+            }
+            if (profilePicture && userData.profile_picture) {
+                profilePicture.src = `/static/${userData.profile_picture}?t=${Date.now()}`;
+            }
+
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+            // Optionally update the profile elements to show an error state
+            if (profileNameElement) profileNameElement.textContent = 'Error';
+            if (profileEmailElement) profileEmailElement.textContent = 'Failed to load';
+        }
+    }
+    // Call the function here so the profile info is loaded when the page loads
+    fetchAndDisplayUserProfile();
+
+    // --- Account Side Panel Toggle Functionality ---
+    // Initial state
+    accountSidePanel.style.display = 'none';
+    accountSidePanel.style.opacity = '0';
+
+    openProfileBtn.addEventListener('click', (event) => {
+        // Prevent the click from immediately propagating to the document listener
+        event.stopPropagation();
+        if (accountSidePanel.style.display === 'none' && accountSidePanel.style.opacity === '0') {
+            accountSidePanel.style.display = 'flex';
+            accountSidePanel.style.opacity = '1'
+        } else {
+            accountSidePanel.style.display = 'none';
+            accountSidePanel.style.opacity = '0'
+        }
+    });
+
+    // --- Close Account Side Panel on Outside Click ---
+    document.addEventListener('click', (event) => {
+        // Check if the account side panel is currently visible
+        if (accountSidePanel.style.display !== 'none') {
+            const isClickInsidePanel = accountSidePanel.contains(event.target);
+            const isClickOnOpenButton = openProfileBtn.contains(event.target); // Check if click is on the button or its children
+
+            // If the click is NOT inside the panel AND NOT on the open button
+            if (!isClickInsidePanel && !isClickOnOpenButton) {
+                console.log('Clicked outside account panel. Closing panel.');
+                accountSidePanel.style.display = 'none';
+                accountSidePanel.style.opacity = '0';
+            }
+        }
+    });
+
+    // --- Logout Button Functionality ---
+    if (logoutBtn) { // Check if the logout button element was found
+        logoutBtn.addEventListener('click', () => {
+            console.log('Logout button clicked. Removing token and redirecting.');
+            localStorage.removeItem('jwt_token'); // Remove the token from localStorage
+            window.location.href = '/'; // Redirect to the starting page
+        });
+    }
+
+    // --- Profile Button Functionality
+    if (profileBtn) {
+        profileBtn.addEventListener('click', () => {
+            window.location.href = '/profile'
+        });
     }
 
     // --- Leaflet Map Initialization ---
@@ -144,118 +320,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- Call the function to load borders after map initialization ---
     loadGeoJsonBorders(window.map);
-
-    // --- Sidebar Toggle Script ---
-    toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('w-16');
-        sidebar.classList.toggle('w-64');
-        sidebarTexts.forEach(text => {
-            text.classList.toggle('hidden');
-            if (!sidebar.classList.contains('w-64')) {
-                text.classList.add('hidden');
-            } else {
-                setTimeout(() => {
-                    if (sidebar.classList.contains('w-64')) {
-                        text.classList.remove('hidden');
-                    }
-                });
-            }
-        });
-        mainContent.classList.toggle('ml-16');
-        mainContent.classList.toggle('ml-64');
-
-        if (window.map) {
-             mainContent.addEventListener('transitionend', function handler(event) {
-                if (event.propertyName === 'margin-left') {
-                    window.map.invalidateSize();
-                    mainContent.removeEventListener('transitionend', handler);
-                }
-            });
-        }
-    });
-
-    // --- Tab Switching Logic ---
-    function openTab(evt, tabName) {
-        document.querySelectorAll(".tabcontent").forEach(content => content.style.display = "none");
-        document.querySelectorAll(".tablinks").forEach(link => link.classList.remove("active"));
-
-        const activeTabContent = document.getElementById(tabName);
-        if (activeTabContent) {
-            activeTabContent.style.display = "flex";
-        } else {
-            console.error(`Tab content with id "${tabName}" not found.`);
-        }
-
-        if (evt) {
-            evt.currentTarget.classList.add("active");
-        }
-
-        if (tabName === 'bookmarks') {
-            loadBookmarks(window.map); // Pass map instance
-        } else if (tabName === 'explore') {
-            updateAllExploreCardBookmarkStates(window.map); // Pass map instance
-        } else if (tabName === 'home') {
-            setTimeout(() => {
-                if (window.map) window.map.invalidateSize();
-                clearMarkers(window.map); // Clear any search markers when going back to home
-            }, 50);
-        }
-        console.log(`Tab switched to: ${tabName}`);
-    }
-
-    // --- Account Side Panel Toggle Functionality ---
-    // Initial state
-    accountSidePanel.style.display = 'none';
-    accountSidePanel.style.opacity = '0';
-
-    openProfileBtn.addEventListener('click', (event) => {
-        // Prevent the click from immediately propagating to the document listener
-        event.stopPropagation();
-        if (accountSidePanel.style.display === 'none' && accountSidePanel.style.opacity === '0') {
-            accountSidePanel.style.display = 'flex';
-            accountSidePanel.style.opacity = '1'
-        } else {
-            accountSidePanel.style.display = 'none';
-            accountSidePanel.style.opacity = '0'
-        }
-    });
-
-    // --- Close Account Side Panel on Outside Click ---
-    document.addEventListener('click', (event) => {
-        // Check if the account side panel is currently visible
-        if (accountSidePanel.style.display !== 'none') {
-            const isClickInsidePanel = accountSidePanel.contains(event.target);
-            const isClickOnOpenButton = openProfileBtn.contains(event.target); // Check if click is on the button or its children
-
-            // If the click is NOT inside the panel AND NOT on the open button
-            if (!isClickInsidePanel && !isClickOnOpenButton) {
-                console.log('Clicked outside account panel. Closing panel.');
-                accountSidePanel.style.display = 'none';
-                accountSidePanel.style.opacity = '0';
-            }
-        }
-    });
-
-    // --- Logout Button Functionality ---
-    if (logoutBtn) { // Check if the logout button element was found
-        logoutBtn.addEventListener('click', () => {
-            console.log('Logout button clicked. Removing token and redirecting.');
-            localStorage.removeItem('jwt_token'); // Remove the token from localStorage
-            window.location.href = '/'; // Redirect to the starting page
-        });
-    } else {
-        console.warn('Logout button element not found (#logout-btn). Logout functionality will not work.');
-    }
-
-    // Attach event listeners to tab buttons
-    document.getElementById('tab-home').addEventListener('click', (e) => openTab(e, 'home'));
-    document.getElementById('tab-explore').addEventListener('click', (e) => openTab(e, 'explore'));
-    document.getElementById('tab-services').addEventListener('click', (e) => openTab(e, 'services'));
-    document.getElementById('tab-chats').addEventListener('click', (e) => openTab(e, 'chats'));
-    document.getElementById('tab-bookmarks').addEventListener('click', (e) => openTab(e, 'bookmarks'));
-
-    // Set the default open tab on page load
-    document.getElementById("tab-home").click();
 
     // --- Home Tab Search/AI Input Toggle ---
     homeSearchButton.addEventListener('click', () => {
