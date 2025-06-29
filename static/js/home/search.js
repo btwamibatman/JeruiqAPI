@@ -1,6 +1,6 @@
 // search.js
 import { showToast } from './utils.js';
-import { addLocationToMap, performPhotonSearch } from './map.js'; // Import map search function and addLocationToMap
+import { addLocationToMap, clearMarkers, addMarkerWithoutClearing, fitMapToMarkers, performPhotonSearch } from './map.js'; // Import map search function and addLocationToMap
 
 let searchErrorContainer = null;
 let homeSearchListbox = null; // Reference to the suggestions listbox
@@ -198,7 +198,7 @@ function displaySuggestions(features, inputElement, mapInstance) {
 
                 inputElement.value = selectedName; // Set input value to the full name
                 homeSearchListbox.classList.add('hidden');
-                addLocationToMap(mapInstance, selectedLat, selectedLon, selectedName);
+                addLocationToMap(mapInstance, selectedLat, selectedLon, selectedName, true);
                 clearSearchError();
             });
             listContainer.appendChild(item);
@@ -209,7 +209,6 @@ function displaySuggestions(features, inputElement, mapInstance) {
             listContainer.innerHTML = '<div class="text-gray-400 text-base p-2">No results for this filter.</div>';
         }
     }
-
     // Initial render with all features
     renderList(features);
     homeSearchListbox.classList.remove('hidden');
@@ -217,7 +216,8 @@ function displaySuggestions(features, inputElement, mapInstance) {
 
 // Function to show sidebar of results
 // This function now accepts an array of Photon Feature objects
-function showSearchSidebar(features) {
+function showSearchSidebar(features, mapInstance) {
+    clearMarkers(mapInstance); // Clear existing markers before showing new results
     // Create or select a sidebar element inside main-content
     let sidebar = document.getElementById('search-sidebar');
     if (!sidebar) {
@@ -234,7 +234,13 @@ function showSearchSidebar(features) {
         }
     }
     sidebar.innerHTML = `
-        <h3 class="text-xl font-bold mb-4 mt-2">Search Results</h3>
+        <h3 class="text-xl font-bold my-2">Search Results</h3>
+        <button id="clear-markers-btn" class="mb-4 mt-2" style="
+            bottom: 1rem;
+            left: 1rem;
+            color: var(--accent-color);
+            background: transparent;
+        ">Clear All Markers</button>
         <button id="close-search-sidebar" class="mb-4 mt-2" style="
             position: absolute;
             top: 1rem;
@@ -271,7 +277,11 @@ function showSearchSidebar(features) {
                     <button class="mt-2 text-[var(--accent-color)] underline" onclick="window.map.flyTo([${lat}, ${lon}], 13)">Show on Map</button>
                 </div>
             `;
+
+            console.log('Adding marker:', lat, lon, displayName, mapInstance);
+            addMarkerWithoutClearing(mapInstance, lat, lon, displayName, 'search');
         });
+        fitMapToMarkers(mapInstance); // Adjust map view to fit all markers
     }
 
     sidebar.style.display = 'block';
@@ -283,8 +293,11 @@ function showSearchSidebar(features) {
             sidebar.style.display = 'none';
         };
     }
+    // Clear Markers Button Functionality ---
+    document.getElementById('clear-markers-btn').addEventListener('click', () => {
+        clearMarkers(window.map);
+    });
 }
-
 
 export function setupSearch(searchInput, searchButton, mapInstance) {
     searchErrorContainer = document.getElementById('search-error-message');
@@ -334,7 +347,7 @@ export function setupSearch(searchInput, searchButton, mapInstance) {
                 );
 
                 // Pass the filtered features array to showSearchSidebar
-                showSearchSidebar(filteredFeatures);
+                showSearchSidebar(filteredFeatures, mapInstance);
 
             } catch (error) {
                 console.error('Error fetching Photon search results:', error);
@@ -371,7 +384,7 @@ export function setupSearch(searchInput, searchButton, mapInstance) {
 
                     // Pass the filtered features array to showSearchSidebar
                     if (filteredFeatures && filteredFeatures.length > 0) {
-                        showSearchSidebar(filteredFeatures);
+                        showSearchSidebar(filteredFeatures, mapInstance);
                     } else {
                         displaySearchError(`No results found for "${query}".`);
                     }

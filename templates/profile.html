@@ -15,7 +15,7 @@ Profile - Jeruyiq
 {% block body %}
 <div class="profile-page-container flex gap-8 max-w-[80%] justify-center mx-auto px-4 py-8">
     <!-- Left Side Navigation Tabs -->
-    <div class="profile-left flex flex-col gap-16 w-64 min-w-[10rem] items-center">
+    <aside class="profile-left flex flex-col gap-16 w-64 min-w-[10rem] items-center">
             <!-- Go Back Button -->
         <div class="go-back-btn w-full">
             <a href="/home" class="flex items-center gap-2 px-6 py-3 pl-0 rounded-2xl bg-transparent text-[var(--text-secondary)] hover:text-[var(--accent-color)] transition-colors duration-300">
@@ -24,47 +24,48 @@ Profile - Jeruyiq
             </a>
         </div>
         <nav class="profile-tabs flex flex-col gap-4 w-60 min-w-[10rem]">
-            <a href="#account" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
-                <span class="material-symbols-outlined">account_circle</span>
-                <span class="font-semibold ml-2">Account</span>
+            <a href="#dashboard" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-semibold ml-2">Dashboard</span>
             </a>
-            <a href="#edit-profile" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
-                <span class="material-symbols-outlined">edit</span>
-                <span class="font-semibold ml-2">Edit Profile</span>
+            <a href="#my-trips" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">luggage</span>
+                <span class="font-semibold ml-2">My Trips</span>
             </a>
             <a href="#security" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
                 <span class="material-symbols-outlined">security</span>
                 <span class="font-semibold ml-2">Security</span>
             </a>
-            <a href="#notifications" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
-                <span class="material-symbols-outlined">notifications</span>
-                <span class="font-semibold ml-2">Notifications</span>
+            <a href="#edit-profile" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
+                <span class="material-symbols-outlined">edit</span>
+                <span class="font-semibold ml-2">Edit Profile</span>
             </a>
             <a href="#settings" class="profile-tab-link flex items-center px-3 py-3 border-l-4 border-transparent transition">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="font-semibold ml-2">Settings</span>
             </a>
         </nav>
-    </div>
+    </aside>
 
     <!-- Main Profile Content -->
     <div class="profile-main flex-1 flex flex-col">
         <!-- Main Content Sections -->
         <main class="profile-main-content relative">
-            <!-- Account Section -->
-            <section id="account" class="profile-section flex flex-col gap-8">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="profile-section flex flex-col gap-8">
                 <!-- Profile Header -->
                 <div class="profile-header neo-container relative flex flex-col rounded-3xl p-0">
-                    <!-- Gradient Cover (top banner, always at the top of the card) -->
-                    <div class="cover-image-gradient flex w-full h-[10rem] rounded-t-3xl z-10"></div>
+                    <!-- Top Banner -->
+                    <div class="cover-image-gradient flex w-full h-[10rem] rounded-t-3xl z-10" id="profile-banner" style="background: url('/static/default-banner.jpg') center/cover no-repeat;">
+                        <input type="file" id="banner-upload" accept="image/*" style="display:none;">
+                        <button id="banner-upload-btn" class="absolute flex items-center justify-center top-4 right-4 bg-[var(--bg-dark)] w-10 h-10 rounded-full p-1 text-sm text-white hover:text-[var(--accent-color)] transition-colors duration-300">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                    </div>
 
                     <!-- Avatar -->
                     <div class="flex justify-center items-center flex-shrink-0 w-full z-20">
                         <img class="profile-picture w-32 h-32 rounded-full object-cover border-4 border-[var(--bg-dark)] absolute top-24 left-6 bg-[var(--bg-medium-dark)]" id="profile-picture-preview">
-                        <!-- Edit icon on avatar -->
-                        <button class="absolute top-2 right-2 bg-white rounded-full w-[2.5rem] h-[2.5rem]">
-                            <span class="material-symbols-outlined text-black text-xl hover:text-[var(--accent-color)] transition-color duration-300">edit</span>
-                        </button>
                     </div>
 
                     <!-- User Info & Actions -->
@@ -73,7 +74,7 @@ Profile - Jeruyiq
                             <div class="user-info-left flex flex-1 flex-col w-full gap-4 px-6 pt-20 pb-6">
                                 <div class="flex flex-col gap-1 top-16">
                                     <h1 class="profile-username text-3xl font-bold text-white" id="profile-username"></h1>
-                                    <p class="profile-location text-lg text-[var(--text-secondary)]" id="profile-location">Astana, Kazakhstan</p>
+                                    <p class="profile-location text-lg text-[var(--text-secondary)]" id="profile-location"></p>
                                 </div>
                                 <div class="flex flex-col gap-3">
                                     <div class="flex gap-2">
@@ -92,15 +93,15 @@ Profile - Jeruyiq
                                 <div class="stat-cards grid grid-cols-3 gap-4 justify-end">
                                     <div class="stat-card glass-container p-4 rounded-2xl text-center">
                                         <h3 class="text-sm text-[var(--text-primary)] mb-1">Trips</h3>
-                                        <p class="text-2xl font-bold text-[var(--accent-color)]">24</p>
+                                        <p class="text-2xl font-bold text-[var(--accent-color)]" id="stat-trips">0</p>
                                     </div>
                                     <div class="stat-card glass-container p-4 rounded-2xl text-center">
                                         <h3 class="text-sm text-[var(--text-primary)] mb-1">Points</h3>
-                                        <p class="text-2xl font-bold text-[var(--accent-color)]">1350</p>
+                                        <p class="text-2xl font-bold text-[var(--accent-color)]" id="stat-points">0</p>
                                     </div>
                                     <div class="stat-card glass-container p-4 rounded-2xl text-center">
                                         <h3 class="text-sm text-[var(--text-primary)] mb-1">Ranking</h3>
-                                        <p class="text-2xl font-bold text-[var(--accent-color)]">#1</p>
+                                        <p class="text-2xl font-bold text-[var(--accent-color)]" id="stat-ranking">#0</p>
                                     </div>
                                 </div>
                                 <div class="interests flex flex-col gap-2">
@@ -134,6 +135,22 @@ Profile - Jeruyiq
                     </div>
                 </div>
             </section>
+            <!-- My Trips Section -->
+            <section id="my-trips" class="profile-section" style="display: none;">
+                <div class="text-center p-8 neo-container rounded-2xl">
+                    <h2 class="text-2xl font-bold mb-6">My Trips</h2>
+                    <div id="trips-list" class="space-y-4">
+                        <p class="text-[var(--text-secondary)]">Your booked trips will appear here.</p>
+                    </div>
+                </div>
+            </section>
+            <!-- Security Section -->
+            <section id="security" class="profile-section" style="display: none;">
+                <div class="text-center p-8 neo-container rounded-2xl">
+                    <h2 class="text-2xl font-bold">Security Settings</h2>
+                    <p class="text-[var(--text-secondary)] mt-2">Security details will be displayed here.</p>
+                </div>
+            </section>
             <!-- Edit Profile Section -->
             <section id="edit-profile" class="profile-section" style="display: none;">
                 <form class="edit-profile-form neo-container w-auto p-8 rounded-2xl">
@@ -152,6 +169,10 @@ Profile - Jeruyiq
                         <input type="email" id="email" value="zhanserikamangazin@gmail.com" class="form-input">
                     </div>
                     <div class="mb-6">
+                        <label for="location" class="block text-[var(--text-secondary)] mb-2">Location</label>
+                        <input type="text" id="location" class="form-input" placeholder="Enter your location">
+                    </div>
+                    <div class="mb-6">
                         <label for="profile-picture" class="block text-[var(--text-secondary)] mb-2">Profile Picture</label>
                         <input type="file" id="profile-picture" name="profile_picture" accept="image/*" class="form-input">
                     </div>
@@ -159,34 +180,10 @@ Profile - Jeruyiq
                         <label for="bio-edit" class="block text-[var(--text-secondary)] mb-2">Bio</label>
                         <textarea id="bio-edit" rows="4" class="form-input"></textarea>
                     </div>
-                    <div class="mb-6">
-                        <label for="instagram" class="block text-[var(--text-secondary)] mb-2">Instagram</label>
-                        <input type="url" id="instagram" class="form-input" placeholder="https://instagram.com/yourprofile">
-                    </div>
-                    <div class="mb-6">
-                        <label for="telegram" class="block text-[var(--text-secondary)] mb-2">Telegram</label>
-                        <input type="url" id="telegram" class="form-input" placeholder="https://t.me/yourprofile">
-                    </div>
-                    <div class="mb-6">
-                        <label for="x" class="block text-[var(--text-secondary)] mb-2">X</label>
-                        <input type="url" id="x" class="form-input" placeholder="https://x.com/yourprofile">
-                    </div>
                     <button type="submit" class="save-changes-btn w-full bg-[var(--accent-color)] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[var(--accent-color-dark)] transition">Save Changes</button>
                 </form>
             </section>
-            <!-- Other Sections will be dynamically loaded here -->
-            <section id="security" class="profile-section" style="display: none;">
-                <div class="text-center p-8 neo-container rounded-2xl">
-                    <h2 class="text-2xl font-bold">Security Settings</h2>
-                    <p class="text-[var(--text-secondary)] mt-2">Security details will be displayed here.</p>
-                </div>
-            </section>
-            <section id="notifications" class="profile-section" style="display: none;">
-                <div class="text-center p-8 neo-container rounded-2xl">
-                    <h2 class="text-2xl font-bold">Notification Preferences</h2>
-                    <p class="text-[var(--text-secondary)] mt-2">Notification settings will be displayed here.</p>
-                </div>
-            </section>
+            <!-- Settings Section -->
             <section id="settings" class="profile-section" style="display: none;">
                 <div class="text-center p-8 neo-container rounded-2xl">
                     <h2 class="text-2xl font-bold">Settings</h2>
@@ -200,10 +197,8 @@ Profile - Jeruyiq
     <aside class="profile-right flex flex-col gap-6 w-64">
         <!-- Quick Social links -->
         <div class="social-links neo-container rounded-2xl p-6">
-            <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul class="space-y-2" id="social-links-list">
-                
-            </ul>
+            <h3 class="text-lg text-[var(--accent-color)] font-semibold mb-4">Quick Links</h3>
+            <ul class="flex flex-col gap-3" id="social-links-list"></ul>
         </div>
         <!-- Add more widgets here if needed -->
     </aside>

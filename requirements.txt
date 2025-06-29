@@ -11,6 +11,8 @@ pytest
 tailwindcss
 marshmallow
 requests
-google.generativeai
+google-generativeai
 redis
 pyodbc
+google
+google-genai

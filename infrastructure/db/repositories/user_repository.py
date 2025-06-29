@@ -1,16 +1,16 @@
-import uuid
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 # Import your domain models
 from domain.models.user import User as DomainUser
-from domain.models.bookmark import Bookmark as DomainBookmark # Import Bookmark domain model
+from domain.models.bookmark import Bookmark as DomainBookmark
+from domain.models.trip import Trip as DomainTrip
 # Import your DB models
 from infrastructure.db.models import User as DBUser # Import SQLAlchemy model
 from infrastructure.db.models import Bookmark as DBBookmark # Import Bookmark DB model
 # Import your exceptions
-from domain.exceptions import DomainException, RepositoryException, NotFoundException, ConflictException # Ensure all necessary exceptions are imported
-from typing import List, Optional
-import uuid # Import uuid
+from domain.exceptions import RepositoryException, NotFoundException, ConflictException # Ensure all necessary exceptions are imported
+from typing import List, Optional, Union
+import uuid, json
 
 class UserRepository: # This is your existing class
     def __init__(self, db_session: Session):
@@ -23,10 +23,20 @@ class UserRepository: # This is your existing class
 
         # Convert DB Bookmark models to Domain Bookmark models
         # Ensure db_user.bookmarks is accessed - SQLAlchemy loads this due to relationship
+        domain_trips = [
+            DomainTrip(
+                trip_id=str(db_trip.trip_id),
+                user_id=str(db_trip.user_id),
+                title=db_trip.title,
+                start_date=db_trip.start_date,
+                image_url=db_trip.image_url,
+                points=db_trip.points
+            ) for db_trip in db_user.trips
+        ]
         domain_bookmarks = [
             DomainBookmark(
-                bookmark_id=db_bookmark.bookmark_id,
-                user_id=db_bookmark.user_id,
+                bookmark_id=str(db_bookmark.bookmark_id),
+                user_id=str(db_bookmark.user_id),
                 place_id=db_bookmark.place_id,
                 name=db_bookmark.name,
                 latitude=db_bookmark.latitude,
@@ -36,16 +46,19 @@ class UserRepository: # This is your existing class
 
         # Ensure all fields expected by the DomainUser dataclass are mapped
         return DomainUser(
-            user_id=db_user.user_id,
+            user_id=str(db_user.user_id),
             name=db_user.name,
             surname=db_user.surname,
             email=db_user.email,
+            location=db_user.location, 
             password_hash=db_user.password_hash,
             role=db_user.role,
-            bio=db_user.bio, # Include bio if it exists
-            profile_picture=db_user.profile_picture, # Include profile_picture if it exists
-            social_links=db_user.social_links, # Include social_links if it exists
-            bookmarks=domain_bookmarks # Include the converted bookmarks
+            bio=db_user.bio,
+            profile_picture=db_user.profile_picture,
+            banner_image=db_user.banner_image,
+            social_links=json.loads(db_user.social_links) if db_user.social_links else {},
+            trips=domain_trips,
+            bookmarks=domain_bookmarks,
         )
 
     def _to_db_user(self, domain_user: DomainUser) -> DBUser:
@@ -55,19 +68,26 @@ class UserRepository: # This is your existing class
          # or by loading the DBUser and modifying its bookmarks list directly.
          # For this conversion back to DB model, we typically don't include the list.
          db_user = DBUser(
-             user_id=domain_user.user_id, # This is where the domain ID is transferred
-             name=domain_user.name,
-             surname=domain_user.surname,
-             email=domain_user.email,
-             password_hash=domain_user.password_hash,
-             role=domain_user.role
+            user_id=uuid.UUID(domain_user.user_id) if isinstance(domain_user.user_id, str) else domain_user.user_id,
+            name=domain_user.name,
+            surname=domain_user.surname,
+            email=domain_user.email,
+            location=domain_user.location,
+            password_hash=domain_user.password_hash,
+            role=domain_user.role,
+            bio=domain_user.bio,
+            profile_picture=domain_user.profile_picture,
+            banner_image=domain_user.banner_image,
+            social_links=json.dumps(domain_user.social_links) if domain_user.social_links else None,
          )
          # print(f"[_to_db_user] Domain User ID: {domain_user.user_id}") # Debug print
          # print(f"[_to_db_user] DBUser ID after mapping: {db_user.user_id}") # Debug print
          return db_user
 
-    def get_by_id(self, user_id: uuid.UUID) -> Optional[DomainUser]: # Changed type hint to uuid.UUID
+    def get_by_id(self, user_id: Union[uuid.UUID]) -> Optional[DomainUser]:
         """Get a user by their ID."""
+        if isinstance(user_id, str):
+            user_id = uuid.UUID(user_id)
         try:
             # SQLAlchemy automatically loads relationships defined with relationship()
             # when you query the parent object.
@@ -118,22 +138,29 @@ class UserRepository: # This is your existing class
 
     def update(self, user: DomainUser) -> DomainUser:
         """Update an existing user in the database."""
+        if isinstance(user.user_id, str):
+            user.user_id = uuid.UUID(user.user_id)
         try:
             db_user = self.db_session.query(DBUser).filter(DBUser.user_id == user.user_id).first()
             if not db_user:
                 raise NotFoundException(f"User with ID {user.user_id} not found.")
+            
+            print(f"Updating location: {db_user.location} -> {user.location}")
 
             # Update fields
             db_user.name = user.name
             db_user.surname = user.surname
             db_user.email = user.email
+            db_user.location = user.location
             # Add other fields as needed, e.g., bio, avatar_url
             if hasattr(user, 'bio'):
                 db_user.bio = user.bio
             if hasattr(user, 'profile_picture'):
                 db_user.profile_picture = user.profile_picture
+            if hasattr(user, 'banner_image'):
+                db_user.banner_image = user.banner_image
             if hasattr(user, 'social_links'):
-                db_user.social_links = user.social_links
+                db_user.social_links = json.dumps(user.social_links) if user.social_links else None
 
             self.db_session.commit()
             self.db_session.refresh(db_user)

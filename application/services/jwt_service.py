@@ -1,8 +1,6 @@
 import jwt
 import datetime
 from typing import Optional
-# Remove the direct import of Config here, as expiration will be passed in __init__
-# from infrastructure.config import Config
 
 class JWTService:
     """Handles JWT token generation and verification."""
@@ -31,7 +29,7 @@ class JWTService:
         try:
             # Ensure algorithms is a list
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
-            user_id: str = payload.get("sub")
+            user_id = payload.get("sub")
             if user_id is None:
                 return None
             return user_id

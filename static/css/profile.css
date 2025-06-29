@@ -43,9 +43,10 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 184, 219, 0.3); /* Accent color glow */
 }
 
+/* Profile Page Layout */
 .profile-tabs {
-    align-self: flex-start;
     position: sticky;
+    align-self: flex-start;
     top: 2rem;
 }
 .profile-tab-link.active {
@@ -60,26 +61,32 @@ body {
     color: var(--accent-color);
 }
 
-/* Responsive adjustments for the accent bar */
-@media (max-width: 768px) {
-    .profile-header {
-        padding-top: 5rem;
-    }
+/* Profile Right Container Layout */
+.social-icon, .social-icon::before {
+    font-size: 1.5rem !important;   /* Adjust as needed */
+    width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
 }
-@media (max-width: 1024px) {
-    .profile-page-container {
-        flex-direction: column;
-    }
-    .profile-tabs, .profile-left {
-        width: 100%;
-        min-width: 0;
-        flex-direction: row;
-        gap: 0.5rem;
-        position: static;
-    }
-    .profile-tab-link {
-        border-radius: 0.75rem;
-        border-left-width: 0;
-        border-bottom-width: 4px;
-    }
+.social-link-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
+.social-link-name {
+    flex-shrink: 0;
+}
+.edit-social-link-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.5rem;
+    color: inherit;
+}
+

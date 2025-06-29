@@ -2,7 +2,8 @@
 import { setupSearch } from './search.js';
 import { loadBookmarks } from './bookmarks.js';
 import { setupExploreFilteringAndSearch, updateAllExploreCardBookmarkStates } from './explore.js';
-import { clearMarkers } from './map.js'; // To clear search marker when switching tabs
+import { clearMarkers } from './map.js';
+import { processAiQuery } from './ai.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // --- Function to check login status and redirect if not logged in
@@ -91,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Unified Tab Switching Logic ---
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
-
     tabButtons.forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- Logout Button Functionality ---
+    // Logout Button Functionality ---
     if (logoutBtn) { // Check if the logout button element was found
         logoutBtn.addEventListener('click', () => {
             console.log('Logout button clicked. Removing token and redirecting.');
@@ -223,8 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.location.href = '/'; // Redirect to the starting page
         });
     }
-
-    // --- Profile Button Functionality
+    // Profile Button Functionality
     if (profileBtn) {
         profileBtn.addEventListener('click', () => {
             window.location.href = '/profile'
@@ -317,8 +316,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Optionally display an error message to the user
         }
     }
-
-    // --- Call the function to load borders after map initialization ---
+    // Call the function to load borders after map initialization ---
     loadGeoJsonBorders(window.map);
 
     // --- Home Tab Search/AI Input Toggle ---
@@ -333,7 +331,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         homeAiInput.classList.remove('pl-5', 'pr-5', 'w-full');
         homeAiInput.classList.add('w-0')
     });
-
     homeAiButton.addEventListener('click', () => {
         homeSearchContainer.style.width = "3rem";
         homeSearchInput.style.width = "0";
@@ -344,6 +341,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         homeAiInput.style.width = "100%";
         homeAiInput.classList.add('pl-5', 'pr-5', 'w-full');
         homeAiInput.classList.remove('w-0')
+
+        // Only process AI query if input is fully extended
+        const aiInputWidth = window.getComputedStyle(homeAiInput).width;
+        if (parseFloat(aiInputWidth) > 150) {
+            const query = homeAiInput.value.trim();
+            if (query) {
+                processAiQuery(query, window.map);
+            }
+        }
+    });
+    homeAiInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            // Only process AI query if input is fully extended
+            const aiInputWidth = window.getComputedStyle(homeAiInput).width;
+            if (parseFloat(aiInputWidth) > 150) {
+                const query = homeAiInput.value.trim();
+                if (query) {
+                    processAiQuery(query, window.map);
+                }
+            }
+        }
     });
 
     // --- Module Setups ---

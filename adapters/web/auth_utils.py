@@ -1,5 +1,6 @@
 from flask import request, jsonify, g # Import g for request context
 from functools import wraps
+import jwt
 # Import dependencies needed by the decorator
 from application.services.jwt_service import JWTService
 from infrastructure.db.repositories.user_repository import UserRepository
@@ -20,58 +21,35 @@ def jwt_required(jwt_service: JWTService, user_repository_factory):
             """
             The wrapper function that performs JWT check.
             """
-            token = None
             # 1. Get token from Authorization header (Bearer token)
-            auth_header = request.headers.get('Authorization')
-            if auth_header:
-                parts = auth_header.split()
-                if parts[0].lower() == 'bearer' and len(parts) == 2:
-                    token = parts[1]
-            # 2. If not in header, check cookie (if you chose that approach)
-            #    Note: Using HttpOnly cookies is generally more secure for web browsers
-            #    than storing JWT in localStorage and sending via Authorization header.
-            #    Choose one approach based on your frontend strategy.
-            if token is None:
-                 token = request.cookies.get('jwt_token')
-
-            if not token:
-                # Token is missing from both header and cookie
-                return jsonify({"message": "Authentication token is missing!"}), 401 # Unauthorized
-
-            # 3. Verify token and get user ID
-            user_id = jwt_service.verify_token(token)
-
-            if user_id is None:
-                # Token is invalid or expired
-                return jsonify({"message": "Token is invalid or expired!"}), 401 # Unauthorized
-
-            # 4. Get user from repository (optional but recommended)
-            #    Need a DB session for the repository.
-            #    Using a factory function passed via DI to get a new repo instance with a session.
-            db_session = SessionLocal() # Get a new session for this request
+            print("DEBUG: Entered JWT decorator")
+            auth_header = request.headers.get('Authorization', None)
+            print(f"DEBUG: Authorization header: {auth_header}")
+            if not auth_header or not auth_header.startswith('Bearer '):
+                print("DEBUG: Invalid or missing Authorization header")
+                return jsonify({"message": "Invalid Authorization header format!"}), 401
+            token = auth_header.split(' ')[1]
+            print(f"DEBUG: Extracted token: {token}")
             try:
-                user_repository = UserRepository(db_session=db_session)
-                current_user = user_repository.get_by_id(user_id)
-
-                if current_user is None:
-                    # Token is valid, but user doesn't exist (e.g., deleted from DB)
-                    return jsonify({"message": "User not found!"}), 401 # Unauthorized
-
-                # 5. Attach user to request context (g)
-                #    The route function can now access the authenticated user via g.current_user
-                g.current_user = current_user
-
+                user_id = jwt_service.verify_token(token)
+                print(f"DEBUG: user_id from token: {user_id}")
+                if not user_id:
+                    print("DEBUG: Invalid token or user_id missing")
+                    return jsonify({"message": "Invalid token"}), 401
+                repo = user_repository_factory()
+                user = repo.get_by_id(user_id)
+                print(f"DEBUG: User from repo: {user}")
+                if not user:
+                    print("DEBUG: User not found in DB")
+                    return jsonify({"message": "User not found"}), 401
+                g.current_user = user
+                print("DEBUG: g.current_user set successfully")
+            except jwt.ExpiredSignatureError:
+                print("DEBUG: Token expired")
+                return jsonify({"message": "Token expired"}), 401
             except Exception as e:
-                 # Handle potential DB errors during user lookup
-                 print(f"Error fetching user in JWT decorator: {e}")
-                 # Return a generic error to the client for security
-                 return jsonify({"message": "An error occurred during authentication."}), 500
-            finally:
-                 # Ensure the database session is closed
-                 db_session.close()
-
-            # If authentication succeeds, call the original route function
+                print(f"DEBUG: Exception during JWT verification: {e}")
+                return jsonify({"message": "Invalid token"}), 401
             return f(*args, **kwargs)
-
         return decorated_function
     return decorator

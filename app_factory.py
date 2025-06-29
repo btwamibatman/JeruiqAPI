@@ -3,8 +3,8 @@ from marshmallow import ValidationError
 
 # Import blueprint factory functions
 from adapters.web.rest.api_blueprint import create_api_blueprint
-from adapters.web.rest.ai_blueprint import create_ai_blueprint
 from adapters.web.rest.auth_blueprint import create_auth_blueprint
+from adapters.web.rest.ai_blueprint import create_ai_blueprint
 # Import specific error handlers
 from adapters.web.error_handlers import (
     handle_exception,
@@ -23,13 +23,10 @@ from infrastructure.config import Config # Ensure Config is imported
 from routes.frontend import frontend_bp
 
 # Import infrastructure clients and domain services needed for dependency injection
-from infrastructure.external.gemini_client import GeminiClient
 from infrastructure.external.photon_client import PhotonClient
-from domain.services.ai_service.gemini_query_service import GeminiQueryService
 from application.use_cases.find_places import find_places
 from application.use_cases.register_user import register_user, EmailAlreadyExistsException
 from application.use_cases.login_user import login_user, InvalidCredentialsException
-from application.services.chat_session_manager import ChatSessionManager
 from application.services.password_hasher import PasswordHasher
 from application.services.jwt_service import JWTService # Ensure JWTService is imported
 from domain.exceptions import (
@@ -38,9 +35,6 @@ from domain.exceptions import (
     ExternalServiceException,
     PlaceNotFoundException
 )
-
-import os
-from datetime import timedelta # Needed for JWT expiration
 
 def create_app(config_object=Config):
     """
@@ -51,15 +45,9 @@ def create_app(config_object=Config):
 
     # --- Dependency Injection Setup ---
     # Create instances of infrastructure clients
-    gemini_client = GeminiClient()
     photon_client = PhotonClient()
 
-    # Create instances of domain services, injecting infrastructure clients
-    gemini_service = GeminiQueryService(gemini_client=gemini_client)
-    # search_service = SearchService(...)
-
     # Create instances of application services
-    chat_session_manager = ChatSessionManager()
     password_hasher = PasswordHasher()
 
     # Define the factory function for JWTService
@@ -98,7 +86,7 @@ def create_app(config_object=Config):
 
 
     # Create instances of application use cases, injecting dependencies
-    find_places_use_case_instance = lambda user_text: find_places(user_text, gemini_service, photon_client)
+    find_places_use_case_instance = lambda user_text: find_places(user_text, photon_client)
 
     register_user_use_case_instance = lambda name, surname, email, plain_password: register_user(
         name=name,
@@ -130,12 +118,9 @@ def create_app(config_object=Config):
         find_places_use_case=find_places_use_case_instance,
         jwt_required_decorator=jwt_required_decorator # Pass the decorator instance
     ))
-    # AI blueprint might also need it if chat is only for logged-in users
     app.register_blueprint(create_ai_blueprint(
-        session_manager=chat_session_manager,
         jwt_required_decorator=jwt_required_decorator # Pass the decorator instance
     ))
-    # Auth blueprint does NOT need the decorator as its routes are for authentication itself
     app.register_blueprint(create_auth_blueprint(
         register_user_use_case=register_user_use_case_instance,
         login_user_use_case=login_user_use_case_instance
@@ -147,11 +132,10 @@ def create_app(config_object=Config):
     app.register_error_handler(InvalidQueryException, handle_invalid_query_exception)
     app.register_error_handler(PlaceNotFoundException, handle_place_not_found_exception)
     app.register_error_handler(ExternalServiceException, handle_external_service_exception)
-    app.register_error_handler(DomainException, handle_domain_exception) # Catch generic domain errors
-    # Register specific auth exceptions (can use generic handler or create specific ones)
+    app.register_error_handler(DomainException, handle_domain_exception)
     app.register_error_handler(EmailAlreadyExistsException, handle_domain_exception)
     app.register_error_handler(InvalidCredentialsException, handle_domain_exception)
-    app.register_error_handler(Exception, handle_exception) # Catch all other exceptions
+    app.register_error_handler(Exception, handle_exception)
 
     # --- Database Session Management (Crucial for Web Apps) ---
     # This ensures a DB session is created at the start of a request

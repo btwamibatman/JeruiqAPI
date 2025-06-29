@@ -1,7 +1,7 @@
 // map.js
 // Assumes L (Leaflet) is globally available from the script tag in HTML
 
-let currentSearchMarker = null; // Variable to keep track of the current marker
+let searchMarkers = []; // Array to store search markers
 
 // Custom Red Icon for Bookmarks (if map.js needs it for bookmark markers)
 export const redIcon = L.ExtraMarkers.icon({
@@ -17,22 +17,34 @@ export const blueIcon = L.ExtraMarkers.icon({
     markerColor: 'blue',
     shape: 'circle',
     prefix: 'fa'
-});
+}); 
 
-export function clearMarkers(mapInstance) {
-    if (currentSearchMarker) {
-        mapInstance.removeLayer(currentSearchMarker);
-        currentSearchMarker = null;
-    }
+export function addLocationToMap(mapInstance, lat, lon, name, type = 'search', clear = true) {
+    if (clear) clearMarkers(mapInstance); // Only clear is requested
+    const markerIcon = type === 'bookmark' ? redIcon : blueIcon;
+    const marker = L.marker([lat, lon], { icon: markerIcon }).addTo(mapInstance);
+    if (name) marker.openPopup(); // Add a popup with the name
+    searchMarkers.push(marker); // Keep track of this new marker
+    mapInstance.setView([lat, lon], 13); // Center map on the new marker
 }
 
-export function addLocationToMap(mapInstance, lat, lon, name, type = 'search') {
-    clearMarkers(mapInstance); // Clear existing markers before adding new ones
+export function addMarkerWithoutClearing(mapInstance, lat, lon, name, type = 'search') {
     const markerIcon = type === 'bookmark' ? redIcon : blueIcon;
-    const marker = L.marker([lat, lon], { icon: markerIcon }).addTo(mapInstance) // Use markerIcon here
-        .openPopup(); // Add a popup with the name
-    currentSearchMarker = marker; // Keep track of this new marker
-    mapInstance.setView([lat, lon], 13); // Center map on the new marker
+    const marker = L.marker([lat, lon], { icon: markerIcon }).addTo(mapInstance);
+    if (name) marker.openPopup(); // Add a popup with the name
+    searchMarkers.push(marker); // Keep track of this new marker
+}
+
+export function clearMarkers(mapInstance) {
+    searchMarkers.forEach(marker => mapInstance.removeLayer(marker));
+    searchMarkers = []; // Clear the array after removing markers
+}
+
+export function fitMapToMarkers(mapInstance) {
+    if (searchMarkers.length > 0) {
+        const group = L.featureGroup(searchMarkers);
+        mapInstance.fitBounds(group.getBounds().pad(0.2));
+    }
 }
 
 export async function performPhotonSearch(mapInstance, queryText) {
